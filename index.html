@@ -16,58 +16,95 @@
     body { font-family: 'Prompt', sans-serif; }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Custom Scrollbar for Sidebar */
+    .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+    .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-blue-500 selection:text-white pb-20">
+<!-- พื้นหลังสีขาวสะอาดตา แซมสีเขียวอ่อน -->
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden antialiased selection:bg-emerald-500 selection:text-white flex">
 
+  <!-- Ambient Glow Background (สีเขียว) -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-blue-400/15 to-indigo-400/15 rounded-full blur-3xl"></div>
-    <div class="absolute top-1/2 -right-40 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
+    <div class="absolute -top-40 right-0 w-[600px] h-[400px] bg-gradient-to-tr from-emerald-100 to-green-50 rounded-full blur-3xl opacity-60"></div>
+    <div class="absolute bottom-0 left-60 w-96 h-96 bg-teal-50 rounded-full blur-3xl opacity-50"></div>
   </div>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      
-      <!-- เปลี่ยนชื่อหัวเว็บไซต์ที่นี่ -->
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 flex-shrink-0">
-          <i data-lucide="camera" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์</h1>
-          <p class="text-[11px] sm:text-xs text-slate-500 font-medium">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
-        </div>
+  <!-- แถบด้านซ้าย (Sidebar - โทนสีเขียวเข้ม-สว่าง) -->
+  <aside class="w-64 bg-gradient-to-b from-emerald-800 to-emerald-900 shadow-xl flex-shrink-0 flex flex-col h-full z-20 text-white border-r border-emerald-950/20 hidden md:flex">
+    
+    <!-- ส่วนหัว Sidebar -->
+    <div class="p-6 border-b border-emerald-700/50 flex flex-col items-center text-center space-y-3">
+      <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-emerald-400/30">
+        <i data-lucide="folder-search" class="w-6 h-6 text-emerald-100"></i>
       </div>
+      <div>
+        <h2 class="text-sm font-bold text-emerald-50 tracking-wide uppercase">คลังภาพแยกตามเดือน</h2>
+        <p class="text-[10px] text-emerald-300/80 mt-0.5">Filter by Folder</p>
+      </div>
+    </div>
 
-      <div class="flex items-center gap-2.5 w-full sm:w-auto">
-        <div class="relative flex-1 sm:w-64">
+    <!-- รายการเดือน (สร้างด้วย JavaScript) -->
+    <div class="flex-1 overflow-y-auto sidebar-scroll py-4 px-3" id="sidebarMenu">
+      <button onclick="filterBySidebar('all')" class="w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 mb-1 flex items-center gap-3 bg-emerald-700/50 text-white shadow-inner border border-emerald-600/30" id="btn-all">
+        <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-200"></i>
+        <span>แสดงทุกแฟ้ม</span>
+      </button>
+      <!-- รายการเดือนจะถูกแทรกที่นี่ -->
+      <div id="sidebarFilterList" class="space-y-1 mt-2"></div>
+    </div>
+
+    <!-- ส่วนท้าย Sidebar -->
+    <div class="p-4 border-t border-emerald-700/50 bg-emerald-950/20">
+      <p class="text-[10px] text-emerald-400/60 text-center">Powered by Google Drive API</p>
+    </div>
+  </aside>
+
+  <!-- เนื้อหาหลัก (Main Content) -->
+  <main class="flex-1 h-full overflow-y-auto relative">
+    
+    <!-- แถบค้นหาด้านบน (Top Search Bar) -->
+    <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+        
+        <!-- ปุ่มเปิดเมนูมือถือ (ซ่อนในคอม) -->
+        <button class="md:hidden p-2 text-slate-500 hover:text-emerald-600 bg-slate-100 rounded-lg">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <!-- ช่องค้นหา -->
+        <div class="relative flex-1 max-w-md">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input type="text" id="searchInput" placeholder="ค้นหาชื่องาน..." class="w-full pl-9 pr-4 py-2 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-sm rounded-xl border border-transparent focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"/>
+          <input type="text" id="searchInput" placeholder="พิมพ์ชื่อกิจกรรมเพื่อค้นหาภาพ..." class="w-full pl-9 pr-4 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-sm rounded-xl border border-transparent focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"/>
         </div>
-        <div class="relative">
-          <select id="monthFilter" class="appearance-none pl-3.5 pr-9 py-2 bg-white text-sm font-medium text-slate-700 rounded-xl border border-slate-200 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 cursor-pointer">
-            <option value="all">📁 ทุกแฟ้ม</option>
-          </select>
-          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-        </div>
+
+      </div>
+    </header>
+
+    <!-- พื้นที่แสดงผลรูปภาพ -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-24">
+      
+      <!-- ส่วนหัวข้อและโลโก้ตรงกลาง -->
+      <div class="text-center mb-12 flex flex-col items-center">
+        <!-- ** เปลี่ยนชื่อไฟล์ตรง src เป็นชื่อรูปภาพโลโก้ที่คุณอัปโหลดขึ้น GitHub ** -->
+        <img src="303928-removebg-preview.jpg" alt="Logo" class="w-24 h-24 sm:w-28 sm:h-28 object-contain mb-4 filter drop-shadow-md" onerror="this.style.display='none'">
+        
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์</h1>
+        <p class="text-sm text-emerald-600 font-medium mt-1">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
+        <div class="w-16 h-1 bg-emerald-500 rounded-full mt-4 opacity-30"></div>
       </div>
 
+      <div id="loading" class="flex flex-col items-center justify-center py-10 space-y-4">
+        <div class="w-10 h-10 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+        <p class="text-sm font-medium text-slate-500">กำลังดึงข้อมูลภาพถ่าย...</p>
+      </div>
+
+      <!-- คอนเทนเนอร์แสดงอัลบั้ม -->
+      <div id="gallery-container" class="space-y-12"></div>
+      
     </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div id="loading" class="flex flex-col items-center justify-center py-28 space-y-4">
-      <div class="relative flex items-center justify-center">
-        <div class="w-12 h-12 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin"></div>
-      </div>
-      <div class="text-center">
-        <p class="text-sm font-medium text-slate-600">กำลังเชื่อมต่อฐานข้อมูลภาพถ่าย...</p>
-      </div>
-    </div>
-
-    <!-- Gallery Container -->
-    <div id="gallery-container" class="space-y-12"></div>
   </main>
 
   <!-- Lightbox Modal -->
@@ -93,6 +130,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbzxI30uAvNXWPm04GzT803itEvdwJsqML23eiHDMQLmDEbB13o6_PI3wHmH9sMQK9hB/exec";
 
     let galleryData = [];
+    let currentFilter = 'all';
 
     async function loadData() {
       try {
@@ -102,34 +140,65 @@
 
         galleryData = data;
         document.getElementById('loading').classList.add('hidden');
-        buildFilterOptions();
+        buildSidebar();
         renderGallery(galleryData);
       } catch (err) {
-        document.getElementById('loading').innerHTML = `<div class="text-red-500 font-medium">โหลดข้อมูลไม่สำเร็จ: ${err.message}</div>`;
+        document.getElementById('loading').innerHTML = `<div class="text-red-500 font-medium bg-red-50 px-4 py-2 rounded-lg text-sm border border-red-100">โหลดข้อมูลไม่สำเร็จ: ${err.message}</div>`;
       }
     }
 
-    function buildFilterOptions() {
-      const select = document.getElementById('monthFilter');
-      select.innerHTML = '<option value="all">📁 แสดงทั้งหมด</option>';
+    // สร้างเมนูด้านซ้าย
+    function buildSidebar() {
+      const listContainer = document.getElementById('sidebarFilterList');
+      listContainer.innerHTML = '';
+      
       galleryData.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.month;
-        opt.textContent = `📁 ${item.month}`;
-        select.appendChild(opt);
+        const btn = document.createElement('button');
+        btn.id = `btn-${item.month}`;
+        btn.className = `sidebar-btn w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-between text-emerald-100/70 hover:bg-emerald-800/50 hover:text-white`;
+        btn.onclick = () => filterBySidebar(item.month);
+        
+        btn.innerHTML = `
+          <div class="flex items-center gap-3">
+            <i data-lucide="folder" class="w-4 h-4"></i>
+            <span class="truncate">${item.month}</span>
+          </div>
+          <span class="text-[10px] bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">${item.events.length}</span>
+        `;
+        listContainer.appendChild(btn);
       });
+      lucide.createIcons();
 
-      select.addEventListener('change', filterAndRender);
-      document.getElementById('searchInput').addEventListener('input', filterAndRender);
+      // ผูก Event ช่องค้นหา
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
     }
 
-    function filterAndRender() {
-      const selectedMonth = document.getElementById('monthFilter').value;
+    // เมื่อกดคลิกเมนูซ้าย
+    function filterBySidebar(month) {
+      currentFilter = month;
+      
+      // อัปเดตสไตล์ปุ่ม
+      document.getElementById('btn-all').className = `w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 mb-1 flex items-center gap-3 ${month === 'all' ? 'bg-emerald-700/50 text-white shadow-inner border border-emerald-600/30' : 'text-emerald-100/70 hover:bg-emerald-800/50'}`;
+      
+      document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        const btnMonth = btn.id.replace('btn-', '');
+        if (btnMonth === month) {
+          btn.className = 'sidebar-btn w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-between bg-emerald-700/50 text-white shadow-inner border border-emerald-600/30';
+        } else {
+          btn.className = 'sidebar-btn w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-between text-emerald-100/70 hover:bg-emerald-800/50 hover:text-white';
+        }
+      });
+
+      applyFilters();
+    }
+
+    // ฟังก์ชันประมวลผลการกรอง (ทั้งปุ่มซ้าย และช่องค้นหา)
+    function applyFilters() {
       const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
       let filtered = JSON.parse(JSON.stringify(galleryData));
 
-      if (selectedMonth !== 'all') {
-        filtered = filtered.filter(item => item.month === selectedMonth);
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(item => item.month === currentFilter);
       }
 
       if (searchKeyword) {
@@ -142,68 +211,63 @@
       renderGallery(filtered);
     }
 
+    // แสดงผลอัลบั้ม
     function renderGallery(dataset) {
       const container = document.getElementById('gallery-container');
       container.innerHTML = '';
 
       if (!dataset || dataset.length === 0) {
-        container.innerHTML = `<div class="text-center py-20 text-slate-400"><p>ไม่พบข้อมูล</p></div>`;
+        container.innerHTML = `<div class="text-center py-24 bg-white/50 backdrop-blur-sm rounded-3xl border border-slate-200 border-dashed"><p class="text-slate-400 font-medium">ไม่พบข้อมูลที่ค้นหา</p></div>`;
         return;
       }
 
       dataset.forEach((folderGroup, groupIndex) => {
         const section = document.createElement('section');
-        section.className = 'space-y-6';
+        section.className = 'space-y-5';
 
         const header = document.createElement('div');
-        header.className = 'flex items-center gap-2 pb-2 border-b border-slate-200';
+        header.className = 'flex items-center gap-2 pb-2';
         header.innerHTML = `
-          <div class="p-1.5 bg-blue-100 text-blue-700 rounded-lg"><i data-lucide="folder-open" class="w-5 h-5"></i></div>
+          <div class="w-1 h-5 bg-emerald-500 rounded-full"></div>
           <h2 class="text-lg font-bold text-slate-800">${folderGroup.month}</h2>
         `;
         section.appendChild(header);
 
-        // ตาราง Grid จัดเรียงอัลบั้ม (แสดงเป็นหน้าปก)
         const albumGrid = document.createElement('div');
-        albumGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+        albumGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5';
 
         folderGroup.events.forEach((event, eventIndex) => {
-          const coverPhoto = event.photos[0]; // ใช้รูปแรกเป็นหน้าปกอัลบั้ม
+          const coverPhoto = event.photos[0]; 
           const albumId = `album-${groupIndex}-${eventIndex}`;
 
           const card = document.createElement('div');
-          card.className = 'bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col group';
+          card.className = 'bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col group';
 
           card.innerHTML = `
-            <!-- ปกอัลบั้ม -->
             <div class="relative aspect-[4/3] w-full overflow-hidden cursor-pointer bg-slate-100" onclick="toggleAlbum('${albumId}')">
               <img src="${coverPhoto.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/10 to-transparent"></div>
               
               <div class="absolute bottom-0 left-0 right-0 p-4">
                 <div class="flex justify-between items-end gap-2">
-                  <h3 class="text-white font-bold text-sm sm:text-base leading-tight drop-shadow-md line-clamp-2">${event.name}</h3>
-                  <div class="bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 whitespace-nowrap">
-                    <i data-lucide="image" class="w-3.5 h-3.5"></i> ${event.photos.length} ภาพ
+                  <h3 class="text-white font-bold text-sm leading-tight drop-shadow-md line-clamp-2">${event.name}</h3>
+                  <div class="bg-emerald-500 text-white px-2 py-1 rounded-md text-[10px] font-bold shadow-sm whitespace-nowrap">
+                    ${event.photos.length} ภาพ
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- ส่วนกางรูปภาพออก (ซ่อนอยู่ตอนแรก) -->
-            <div id="${albumId}" class="hidden bg-slate-50 border-t border-slate-100 p-4">
-              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-80 overflow-y-auto scrollbar-hide pr-1">
+            <div id="${albumId}" class="hidden bg-slate-50/50 border-t border-slate-100 p-3">
+              <div class="grid grid-cols-3 gap-2 max-h-72 overflow-y-auto scrollbar-hide pr-1">
                 ${event.photos.map(photo => `
-                  <div class="aspect-square rounded-xl overflow-hidden relative group/item bg-slate-200 cursor-pointer" onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')">
+                  <div class="aspect-square rounded-xl overflow-hidden relative group/item bg-slate-200 cursor-pointer border border-slate-200/50" onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')">
                     <img src="${photo.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"/>
-                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
-                      <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                    <div class="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                      <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                     </div>
                   </div>
                 `).join('')}
-              </div>
-              <div class="mt-3 text-center">
-                 <button onclick="toggleAlbum('${albumId}')" class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm">พับเก็บ</button>
               </div>
             </div>
           `;
@@ -218,17 +282,11 @@
       lucide.createIcons();
     }
 
-    // ฟังก์ชันเปิด-ปิดอัลบั้ม
     window.toggleAlbum = function(id) {
       const el = document.getElementById(id);
-      if (el.classList.contains('hidden')) {
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
-      }
+      el.classList.toggle('hidden');
     };
 
-    // ฟังก์ชัน Lightbox
     const modal = document.getElementById('lightboxModal');
     const modalImg = document.getElementById('modalImage');
     function openLightbox(imgSrc, name, downloadUrl) {
