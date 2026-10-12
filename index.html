@@ -3,67 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดเก็บและคลังภาพกิจกรรม</title>
+  <title>ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์ - ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</title>
   
-  <!-- ฟอนต์ Prompt สไตล์มินิมอลโมเดิร์น -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    body {
-      font-family: 'Prompt', sans-serif;
-    }
+    body { font-family: 'Prompt', sans-serif; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-blue-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-blue-500 selection:text-white pb-20">
 
-  <!-- พื้นหลังประดับแสงสะท้อนเบาๆ (Ambient Glow) -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-blue-400/15 to-indigo-400/15 rounded-full blur-3xl"></div>
     <div class="absolute top-1/2 -right-40 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
   </div>
 
-  <!-- Header / Navigation Bar -->
-  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 transition-all">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex flex-col sm:flex-row items-center justify-between gap-4 py-3 sm:py-0">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
-      <!-- Brand & Title -->
+      <!-- เปลี่ยนชื่อหัวเว็บไซต์ที่นี่ -->
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50">
-          <i data-lucide="image" class="w-5 h-5"></i>
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 flex-shrink-0">
+          <i data-lucide="camera" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">คลังภาพกิจกรรมออนไลน์</h1>
-          <p class="text-xs text-slate-400 font-normal">ระบบจัดเก็บและเผยแพร่ภาพถ่ายกิจกรรม</p>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์</h1>
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
         </div>
       </div>
 
-      <!-- Filters & Search Toolbar -->
-      <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-        <!-- Live Search -->
+      <div class="flex items-center gap-2.5 w-full sm:w-auto">
         <div class="relative flex-1 sm:w-64">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="ค้นหากิจกรรม หรือชื่อรูป..." 
-            class="w-full pl-9 pr-4 py-2 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-xs sm:text-sm rounded-xl border border-transparent focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-          />
+          <input type="text" id="searchInput" placeholder="ค้นหาชื่องาน..." class="w-full pl-9 pr-4 py-2 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-sm rounded-xl border border-transparent focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"/>
         </div>
-
-        <!-- Folder Dropdown -->
         <div class="relative">
-          <select 
-            id="monthFilter" 
-            class="appearance-none pl-3.5 pr-9 py-2 bg-white text-xs sm:text-sm font-medium text-slate-700 rounded-xl border border-slate-200 shadow-sm hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-500/10 cursor-pointer transition-all"
-          >
-            <option value="all">📁 ทุกช่วงเวลา / โฟลเดอร์</option>
+          <select id="monthFilter" class="appearance-none pl-3.5 pr-9 py-2 bg-white text-sm font-medium text-slate-700 rounded-xl border border-slate-200 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 cursor-pointer">
+            <option value="all">📁 ทุกแฟ้ม</option>
           </select>
           <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
         </div>
@@ -72,52 +56,40 @@
     </div>
   </header>
 
-  <!-- Container หลัก -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-
-    <!-- Loading Skeleton -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div id="loading" class="flex flex-col items-center justify-center py-28 space-y-4">
       <div class="relative flex items-center justify-center">
         <div class="w-12 h-12 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin"></div>
       </div>
       <div class="text-center">
         <p class="text-sm font-medium text-slate-600">กำลังเชื่อมต่อฐานข้อมูลภาพถ่าย...</p>
-        <p class="text-xs text-slate-400 mt-1">Google Drive Cloud Storage</p>
       </div>
     </div>
 
     <!-- Gallery Container -->
     <div id="gallery-container" class="space-y-12"></div>
-
   </main>
 
-  <!-- Modal ดูภาพขนาดใหญ่ (Lightbox Modal) -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
-    <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
-      
-      <!-- Top Action bar in Modal -->
-      <div class="w-full flex justify-between items-center text-white mb-3 px-2">
-        <p id="modalImageName" class="text-xs sm:text-sm font-medium text-slate-200 truncate max-w-[70%]"></p>
-        <div class="flex items-center gap-2">
-          <a id="modalDownloadBtn" href="#" download="" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-blue-600/30">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>ดาวน์โหลด</span>
-          </a>
-          <button id="closeModalBtn" class="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div class="relative max-w-6xl w-full flex flex-col items-center">
+      <div class="absolute top-4 right-4 z-50 flex gap-2">
+        <a id="modalDownloadBtn" href="#" target="_blank" class="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors" title="ดาวน์โหลด">
+          <i data-lucide="download" class="w-5 h-5"></i>
+        </a>
+        <button onclick="closeLightbox()" class="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors" title="ปิดหน้าต่าง">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
-
-      <!-- ภาพขยาย -->
-      <div class="relative rounded-2xl overflow-hidden bg-black/40 flex items-center justify-center max-h-[80vh] shadow-2xl">
-        <img id="modalImage" src="" alt="preview" class="max-w-full max-h-[80vh] object-contain rounded-xl select-none" />
-      </div>
+      <img id="modalImage" src="" alt="preview" class="max-h-[85vh] object-contain rounded-lg shadow-2xl select-none" />
+      <p id="modalImageName" class="text-sm font-medium text-slate-300 mt-4 text-center truncate max-w-xl"></p>
     </div>
   </div>
 
   <script>
-    // แทนที่ด้วย Web App URL ของ Google Apps Script ที่ Deploy ล่าสุด
+    // ==========================================
+    // นำลิงก์ Web App URL /exec มาใส่ในบรรทัดด้านล่าง
+    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzxI30uAvNXWPm04GzT803itEvdwJsqML23eiHDMQLmDEbB13o6_PI3wHmH9sMQK9hB/exec";
 
     let galleryData = [];
@@ -126,7 +98,6 @@
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
-
         if (data.error) throw new Error(data.error);
 
         galleryData = data;
@@ -134,31 +105,20 @@
         buildFilterOptions();
         renderGallery(galleryData);
       } catch (err) {
-        document.getElementById('loading').innerHTML = `
-          <div class="max-w-md bg-white p-6 rounded-3xl border border-red-100 shadow-xl shadow-red-500/5 text-center">
-            <div class="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <i data-lucide="alert-circle" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-sm font-bold text-slate-800">เชื่อมต่อคลังภาพไม่สำเร็จ</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-4">โปรดตรวจสอบว่าเปิดสิทธิ์โฟลเดอร์ Google Drive เป็นสาธารณะแล้ว</p>
-            <span class="inline-block px-3 py-1.5 bg-red-50 text-red-600 text-[11px] font-mono rounded-lg border border-red-100">${err.message}</span>
-          </div>
-        `;
-        lucide.createIcons();
+        document.getElementById('loading').innerHTML = `<div class="text-red-500 font-medium">โหลดข้อมูลไม่สำเร็จ: ${err.message}</div>`;
       }
     }
 
     function buildFilterOptions() {
       const select = document.getElementById('monthFilter');
-      select.innerHTML = '<option value="all">📁 แสดงทุกโฟลเดอร์</option>';
+      select.innerHTML = '<option value="all">📁 แสดงทั้งหมด</option>';
       galleryData.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.month;
-        opt.textContent = `📁 โฟลเดอร์: ${item.month}`;
+        opt.textContent = `📁 ${item.month}`;
         select.appendChild(opt);
       });
 
-      // ดัก Event ทั้งช่อง Filter และช่อง Search
       select.addEventListener('change', filterAndRender);
       document.getElementById('searchInput').addEventListener('input', filterAndRender);
     }
@@ -166,25 +126,15 @@
     function filterAndRender() {
       const selectedMonth = document.getElementById('monthFilter').value;
       const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
-
       let filtered = JSON.parse(JSON.stringify(galleryData));
 
-      // กรองตามโฟลเดอร์/เดือน
       if (selectedMonth !== 'all') {
         filtered = filtered.filter(item => item.month === selectedMonth);
       }
 
-      // กรองตามคำค้นหา
       if (searchKeyword) {
         filtered = filtered.map(group => {
-          const matchingEvents = group.events.map(event => {
-            const isEventMatch = event.name.toLowerCase().includes(searchKeyword);
-            const matchingPhotos = event.photos.filter(photo => 
-              isEventMatch || photo.name.toLowerCase().includes(searchKeyword)
-            );
-            return { ...event, photos: matchingPhotos };
-          }).filter(event => event.photos.length > 0);
-
+          const matchingEvents = group.events.filter(event => event.name.toLowerCase().includes(searchKeyword));
           return { ...group, events: matchingEvents };
         }).filter(group => group.events.length > 0);
       }
@@ -197,135 +147,106 @@
       container.innerHTML = '';
 
       if (!dataset || dataset.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-20 bg-white rounded-3xl border border-slate-200/60 shadow-sm">
-            <i data-lucide="image-off" class="w-10 h-10 text-slate-300 mx-auto mb-2"></i>
-            <p class="text-sm font-semibold text-slate-600">ไม่พบรูปภาพตามเงื่อนไขที่เลือก</p>
-            <p class="text-xs text-slate-400 mt-1">ลองเปลี่ยนคำค้นหา หรือเลือกโฟลเดอร์อื่น</p>
-          </div>
-        `;
-        lucide.createIcons();
+        container.innerHTML = `<div class="text-center py-20 text-slate-400"><p>ไม่พบข้อมูล</p></div>`;
         return;
       }
 
-      dataset.forEach(folderGroup => {
+      dataset.forEach((folderGroup, groupIndex) => {
         const section = document.createElement('section');
         section.className = 'space-y-6';
 
-        // Header ของ Folder
         const header = document.createElement('div');
-        header.className = 'flex items-center gap-2.5 pb-2 border-b border-slate-200';
+        header.className = 'flex items-center gap-2 pb-2 border-b border-slate-200';
         header.innerHTML = `
-          <div class="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
-            <i data-lucide="folder" class="w-4 h-4"></i>
-          </div>
-          <h2 class="text-base sm:text-lg font-bold text-slate-800 tracking-tight">${folderGroup.month}</h2>
+          <div class="p-1.5 bg-blue-100 text-blue-700 rounded-lg"><i data-lucide="folder-open" class="w-5 h-5"></i></div>
+          <h2 class="text-lg font-bold text-slate-800">${folderGroup.month}</h2>
         `;
         section.appendChild(header);
 
-        // แต่ละกิจกรรม
-        folderGroup.events.forEach(event => {
+        // ตาราง Grid จัดเรียงอัลบั้ม (แสดงเป็นหน้าปก)
+        const albumGrid = document.createElement('div');
+        albumGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+
+        folderGroup.events.forEach((event, eventIndex) => {
+          const coverPhoto = event.photos[0]; // ใช้รูปแรกเป็นหน้าปกอัลบั้ม
+          const albumId = `album-${groupIndex}-${eventIndex}`;
+
           const card = document.createElement('div');
-          card.className = 'bg-white/70 backdrop-blur-sm p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow space-y-4';
+          card.className = 'bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col group';
 
           card.innerHTML = `
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                <h3 class="text-sm sm:text-base font-semibold text-slate-800">${event.name}</h3>
-              </div>
-              <span class="inline-flex items-center gap-1 px-3 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full">
-                <i data-lucide="images" class="w-3.5 h-3.5 text-slate-400"></i>
-                ${event.photos.length} ภาพ
-              </span>
-            </div>
-          `;
-
-          // Photo Grid
-          const grid = document.createElement('div');
-          grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5';
-
-          event.photos.forEach(photo => {
-            const photoCard = document.createElement('div');
-            photoCard.className = 'group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70 shadow-sm hover:shadow-xl transition-all duration-300';
-
-            photoCard.innerHTML = `
-              <img 
-                src="${photo.thumbnailUrl}" 
-                alt="${photo.name}" 
-                loading="lazy"
-                referrerpolicy="no-referrer"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-
-              <!-- Overlay ลอยขึ้นเมื่อ Hover -->
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5">
-                <p class="text-[11px] font-medium text-white truncate mb-2 px-1" title="${photo.name}">${photo.name}</p>
-                <div class="flex items-center gap-1.5">
-                  <button 
-                    onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')" 
-                    class="flex-1 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-lg text-[11px] font-medium flex items-center justify-center gap-1 transition-colors"
-                  >
-                    <i data-lucide="maximize-2" class="w-3 h-3"></i>
-                    <span>ขยาย</span>
-                  </button>
-                  <a 
-                    href="${photo.downloadUrl}" 
-                    download="${photo.name}" 
-                    target="_blank" 
-                    class="p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] transition-colors"
-                    title="ดาวน์โหลด"
-                  >
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                  </a>
+            <!-- ปกอัลบั้ม -->
+            <div class="relative aspect-[4/3] w-full overflow-hidden cursor-pointer bg-slate-100" onclick="toggleAlbum('${albumId}')">
+              <img src="${coverPhoto.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+              
+              <div class="absolute bottom-0 left-0 right-0 p-4">
+                <div class="flex justify-between items-end gap-2">
+                  <h3 class="text-white font-bold text-sm sm:text-base leading-tight drop-shadow-md line-clamp-2">${event.name}</h3>
+                  <div class="bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="image" class="w-3.5 h-3.5"></i> ${event.photos.length} ภาพ
+                  </div>
                 </div>
               </div>
-            `;
-            grid.appendChild(photoCard);
-          });
+            </div>
 
-          card.appendChild(grid);
-          section.appendChild(card);
+            <!-- ส่วนกางรูปภาพออก (ซ่อนอยู่ตอนแรก) -->
+            <div id="${albumId}" class="hidden bg-slate-50 border-t border-slate-100 p-4">
+              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-80 overflow-y-auto scrollbar-hide pr-1">
+                ${event.photos.map(photo => `
+                  <div class="aspect-square rounded-xl overflow-hidden relative group/item bg-slate-200 cursor-pointer" onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')">
+                    <img src="${photo.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"/>
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center">
+                      <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="mt-3 text-center">
+                 <button onclick="toggleAlbum('${albumId}')" class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm">พับเก็บ</button>
+              </div>
+            </div>
+          `;
+          
+          albumGrid.appendChild(card);
         });
 
+        section.appendChild(albumGrid);
         container.appendChild(section);
       });
 
       lucide.createIcons();
     }
 
-    // ฟังก์ชันจัดการ Lightbox Modal
+    // ฟังก์ชันเปิด-ปิดอัลบั้ม
+    window.toggleAlbum = function(id) {
+      const el = document.getElementById(id);
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    };
+
+    // ฟังก์ชัน Lightbox
     const modal = document.getElementById('lightboxModal');
     const modalImg = document.getElementById('modalImage');
-    const modalName = document.getElementById('modalImageName');
-    const modalDownload = document.getElementById('modalDownloadBtn');
-
     function openLightbox(imgSrc, name, downloadUrl) {
       modalImg.src = imgSrc;
-      modalName.textContent = name;
-      modalDownload.href = downloadUrl;
-      modalDownload.setAttribute('download', name);
-
+      document.getElementById('modalImageName').textContent = name;
+      document.getElementById('modalDownloadBtn').href = downloadUrl;
+      document.getElementById('modalDownloadBtn').setAttribute('download', name);
       modal.classList.remove('hidden');
       setTimeout(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100', 'pointer-events-auto');
       }, 10);
     }
-
-    function closeLightbox() {
+    window.closeLightbox = function() {
       modal.classList.remove('opacity-100', 'pointer-events-auto');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modalImg.src = '';
-      }, 300);
-    }
-
-    document.getElementById('closeModalBtn').addEventListener('click', closeLightbox);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeLightbox();
-    });
+      setTimeout(() => { modal.classList.add('hidden'); modalImg.src = ''; }, 300);
+    };
 
     loadData();
   </script>
