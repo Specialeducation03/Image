@@ -7,139 +7,254 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    body { font-family: 'Prompt', sans-serif; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Custom Scrollbar for Sidebar */
-    .sidebar-scroll::-webkit-scrollbar { width: 5px; }
-    .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-scroll::-webkit-scrollbar-thumb { background-color: rgba(167, 243, 208, 0.2); border-radius: 10px; }
-    .sidebar-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(167, 243, 208, 0.5); }
+    body {
+      font-family: 'Prompt', sans-serif;
+      background-color: #0b101e;
+      color: #f1f5f9;
+    }
+    /* แสงเรืองด้านบนสุดเหมือนต้นฉบับ */
+    .top- radial-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.14) 0%, rgba(11, 16, 30, 0) 70%);
+    }
+    .scrollbar-custom::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-custom::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+    .scrollbar-custom::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.4); border-radius: 9999px; }
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
   </style>
 </head>
+<body class="min-h-screen antialiased selection:bg-sky-500 selection:text-white relative overflow-x-hidden pb-20">
 
-<!-- พื้นหลังไล่เฉดสี 2 โทน: ขาว (via-white) และ เขียวอ่อน (from-emerald-50 to-green-100) -->
-<body class="bg-gradient-to-br from-emerald-50 via-white to-green-100 text-slate-800 h-screen overflow-hidden antialiased selection:bg-emerald-500 selection:text-white flex">
+  <!-- พื้นหลัง Glow ด้านบน -->
+  <div class="fixed inset-0 pointer-events-none top-radial-glow -z-10"></div>
+  <div class="fixed -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-  <!-- Ambient Glow Background เพิ่มมิติแสงสีเขียวเบาๆ ด้านหลัง -->
-  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-    <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-emerald-100/50 to-transparent"></div>
-    <div class="absolute -top-40 right-0 w-[600px] h-[600px] bg-gradient-to-tr from-emerald-200/40 to-green-100/40 rounded-full blur-3xl opacity-80"></div>
-    <div class="absolute bottom-0 left-1/4 w-[800px] h-[400px] bg-gradient-to-tr from-emerald-100/40 to-transparent rounded-full blur-3xl"></div>
-  </div>
-
-  <!-- แถบด้านซ้าย (Sidebar - โทนสีเขียวเข้ม ดูหรูหรา) -->
-  <aside class="w-64 bg-gradient-to-b from-emerald-900 to-[#064e3b] shadow-[4px_0_24px_rgba(4,120,87,0.15)] flex-shrink-0 flex flex-col h-full z-20 text-white border-r border-emerald-800/50 hidden md:flex">
-    
-    <!-- ส่วนหัว Sidebar -->
-    <div class="p-7 border-b border-emerald-700/50 flex flex-col items-center text-center space-y-4">
-      <div class="w-14 h-14 bg-gradient-to-tr from-emerald-400 to-green-300 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 text-emerald-950">
-        <i data-lucide="image-library" class="w-7 h-7"></i>
-      </div>
-      <div>
-        <h2 class="text-sm font-extrabold text-emerald-50 tracking-wider uppercase">แฟ้มภาพกิจกรรม</h2>
-        <p class="text-[11px] text-emerald-300/80 mt-1 font-medium">แบ่งตามเดือนและปี พ.ศ.</p>
-      </div>
-    </div>
-
-    <!-- รายการเดือน (สร้างด้วย JavaScript) -->
-    <div class="flex-1 overflow-y-auto sidebar-scroll py-5 px-3" id="sidebarMenu">
-      <button onclick="filterBySidebar('all')" class="w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 mb-2 flex items-center gap-3 bg-white/10 text-white shadow-inner border border-white/20 backdrop-blur-sm hover:scale-[1.02]" id="btn-all">
-        <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-200"></i>
-        <span>แสดงทุกแฟ้มภาพ</span>
-      </button>
-      <div id="sidebarFilterList" class="space-y-1.5 mt-3"></div>
-    </div>
-
-    <!-- ส่วนท้าย Sidebar -->
-    <div class="p-4 border-t border-emerald-800/50 bg-black/10 backdrop-blur-md">
-      <p class="text-[10px] text-emerald-400/60 text-center font-medium">Powered by Google Drive API</p>
-    </div>
-  </aside>
-
-  <!-- เนื้อหาหลัก (Main Content - โทนสีขาวสว่าง) -->
-  <main class="flex-1 h-full overflow-y-auto relative scroll-smooth">
-    
-    <!-- แถบค้นหาด้านบน (Top Search Bar - Glassmorphism) -->
-    <header class="sticky top-0 z-30 bg-white/60 backdrop-blur-xl border-b border-emerald-100/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-        
-        <!-- ปุ่มเปิดเมนูมือถือ -->
-        <button class="md:hidden p-2 text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors">
-          <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
-
-        <!-- ช่องค้นหา -->
-        <div class="relative flex-1 max-w-md">
-          <i data-lucide="search" class="w-4 h-4 text-emerald-600/60 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-          <input type="text" id="searchInput" placeholder="พิมพ์ชื่อกิจกรรมเพื่อค้นหาภาพ..." class="w-full pl-10 pr-4 py-2.5 bg-white/80 hover:bg-white focus:bg-white text-sm text-slate-700 placeholder-slate-400 rounded-xl border border-emerald-100 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 outline-none transition-all shadow-sm"/>
+  <!-- แถบเมนูด้านบน (Navbar) -->
+  <header class="border-b border-slate-800/80 bg-[#0b101e]/80 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <!-- โลโก้และชื่อหน่วยงาน -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-lg shadow-sky-500/10 flex-shrink-0">
+          <img 
+            src="https://drive.google.com/thumbnail?id=1DOH22NpUKS6R9paJ6QJkecEabTvsp5OC&sz=w500" 
+            alt="Logo" 
+            class="w-full h-full object-contain"
+            onerror="this.src='https://placehold.co/100x100?text=LOGO'"
+          />
         </div>
-
-      </div>
-    </header>
-
-    <!-- พื้นที่แสดงผลรูปภาพ -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 pb-24">
-      
-      <!-- ส่วนหัวข้อและโลโก้ตรงกลาง -->
-      <div class="text-center mb-14 flex flex-col items-center relative">
-        <!-- รูปรัศมีสว่างด้านหลังโลโก้ -->
-        <div class="absolute top-0 w-32 h-32 bg-emerald-300/30 rounded-full blur-2xl"></div>
-        
-        <!-- ลิงก์โลโก้แบบโปร่งแสง -->
-        <img src="https://drive.google.com/thumbnail?id=1fNbuglThqRokM560p9ph6b4tZCQH6SYs&sz=w500" alt="Logo" class="w-24 h-24 sm:w-28 sm:h-28 object-contain mb-4 filter drop-shadow-md" onerror="this.style.display='none'">
-        
-        <!-- ข้อความหัวเว็บแบบไล่สี (Gradient Text) -->
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 to-green-500 tracking-tight mb-2">ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์</h1>
-        <p class="text-sm sm:text-base text-emerald-600/80 font-semibold tracking-wide">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
-        
-        <!-- ขีดเส้นใต้ตกแต่ง -->
-        <div class="w-20 h-1.5 bg-gradient-to-r from-emerald-400 to-green-300 rounded-full mt-6 opacity-80"></div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-sky-400 tracking-wide leading-tight">คลังภาพโสตทัศนูปกรณ์</h1>
+          <p class="text-xs text-slate-400 font-normal">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
+        </div>
       </div>
 
-      <!-- ส่วนแจ้งสถานะกำลังโหลด -->
-      <div id="loading" class="flex flex-col items-center justify-center py-10 space-y-4">
-        <div class="w-12 h-12 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin shadow-lg shadow-emerald-500/20"></div>
-        <p class="text-sm font-semibold text-emerald-700 animate-pulse">กำลังดึงข้อมูลภาพถ่าย...</p>
+      <!-- ปุ่มเมนูด้านขวา -->
+      <div class="flex items-center gap-2.5">
+        <button onclick="resetAllFilters()" class="w-10 h-10 rounded-full border border-slate-700/80 bg-slate-800/50 hover:bg-slate-700/60 flex items-center justify-center text-slate-300 transition-all" title="หน้าแรก / รีเซ็ตตัวกรอง">
+          <i data-lucide="home" class="w-4 h-4"></i>
+        </button>
+        <button onclick="toggleCoverMode()" id="modeToggleBtn" class="px-4 py-2 rounded-full border border-slate-700/80 bg-slate-800/50 hover:bg-slate-700/60 flex items-center gap-2 text-xs font-medium text-slate-300 transition-all">
+          <i data-lucide="Sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span id="modeToggleText">โหมดการ์ดสี</span>
+        </button>
       </div>
 
-      <!-- คอนเทนเนอร์แสดงอัลบั้ม -->
-      <div id="gallery-container" class="space-y-14"></div>
-      
     </div>
+  </header>
+
+  <!-- เนื้อหาหลัก -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
+
+    <!-- ส่วนหัว Hero Section -->
+    <section class="mb-10">
+      <h2 class="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-sky-300 via-blue-200 to-indigo-200 bg-clip-text text-transparent tracking-tight mb-4">
+        ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์
+      </h2>
+      <p class="text-slate-400 text-sm sm:text-base max-w-3xl leading-relaxed mb-6">
+        รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานของศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา ไว้ในที่เดียว ช่วยให้ค้นหา เปิดดูภาพความละเอียดสูง และดาวน์โหลดนำไปใช้งานได้อย่างสะดวกรวดเร็วผ่านเว็บ
+      </p>
+
+      <!-- ป้ายสถานะ (Stat Pills) -->
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
+          <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- แถบค้นหาและตัวกรองเดือน/ปี พ.ศ. -->
+    <section class="mb-8 space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <!-- ช่องค้นหา -->
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="ค้นหาชื่อกิจกรรม หรือชื่อแฟ้มภาพ..." 
+            class="w-full pl-11 pr-4 py-2.5 bg-slate-900/90 hover:bg-slate-900 focus:bg-slate-900 text-sm text-white placeholder-slate-500 rounded-xl border border-slate-800 focus:border-sky-500/60 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
+          />
+        </div>
+      </div>
+
+      <!-- ปุ่มเลือกเดือนและปี พ.ศ. (Month Pills) -->
+      <div id="monthPillsContainer" class="flex items-center gap-2 overflow-x-auto scrollbar-custom pb-2">
+        <!-- สร้างด้วย JS -->
+      </div>
+    </section>
+
+    <!-- สถานะกำลังโหลด -->
+    <div id="loading" class="flex flex-col items-center justify-center py-24 space-y-4">
+      <div class="w-11 h-11 border-4 border-slate-800 border-t-sky-400 rounded-full animate-spin"></div>
+      <p class="text-sm text-slate-400">กำลังซิงค์ข้อมูลอัลบั้มภาพจาก Google Drive...</p>
+    </div>
+
+    <!-- ตารางการ์ดกิจกรรม (Bento Grid 3 คอลัมน์เหมือนต้นฉบับ) -->
+    <div id="cards-container" class="space-y-10"></div>
+
   </main>
 
-  <!-- Lightbox Modal (หน้าต่างซูมรูปภาพ) -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-xl hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
-    <div class="relative max-w-6xl w-full flex flex-col items-center">
-      <div class="absolute top-4 right-4 z-50 flex gap-3">
-        <a id="modalDownloadBtn" href="#" target="_blank" class="p-2.5 bg-emerald-500 hover:bg-emerald-400 rounded-full text-white transition-all shadow-lg shadow-emerald-500/30 hover:scale-110" title="ดาวน์โหลด">
-          <i data-lucide="download" class="w-5 h-5"></i>
-        </a>
-        <button onclick="closeLightbox()" class="p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:scale-110" title="ปิดหน้าต่าง">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+  <!-- ========================================================= -->
+  <!-- Modal หน้าต่างแสดงรูปภาพทั้งหมดในอัลบั้มเมื่อคลิกการ์ด -->
+  <!-- ========================================================= -->
+  <div id="albumModal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- หัวหน้าต่างอัลบั้ม -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-4 bg-slate-900/60">
+        <div>
+          <span id="albumModalMonth" class="text-[11px] font-semibold text-sky-400 uppercase tracking-wider"></span>
+          <h3 id="albumModalTitle" class="text-lg sm:text-xl font-bold text-white mt-0.5"></h3>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="albumModalCount" class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700"></span>
+          <button onclick="closeAlbumModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
       </div>
-      <img id="modalImage" src="" alt="preview" class="max-h-[85vh] object-contain rounded-xl shadow-2xl select-none ring-1 ring-white/10" />
-      <p id="modalImageName" class="text-sm font-medium text-emerald-100 mt-5 text-center truncate max-w-xl bg-black/30 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/5"></p>
+
+      <!-- รายการรูปภาพข้างในอัลบั้ม -->
+      <div id="albumModalGrid" class="p-6 overflow-y-auto scrollbar-custom grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- รูปภาพจะถูกใส่ที่นี่ -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- Lightbox Modal ซูมดูรูปภาพขนาดเต็มจอ -->
+  <!-- ========================================================= -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0 pointer-events-none">
+    <div class="relative max-w-6xl w-full flex flex-col items-center">
+      <div class="w-full flex justify-between items-center mb-3 px-2">
+        <p id="modalImageName" class="text-sm font-medium text-slate-300 truncate max-w-[65%]"></p>
+        <div class="flex items-center gap-2.5">
+          <a id="modalDownloadBtn" href="#" target="_blank" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-500/20">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>ดาวน์โหลดภาพนี้</span>
+          </a>
+          <button onclick="closeLightbox()" class="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-all" title="ปิดหน้าต่าง">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <img id="modalImage" src="" alt="preview" class="max-h-[82vh] object-contain rounded-2xl shadow-2xl select-none border border-white/10" />
     </div>
   </div>
 
   <script>
     // ==========================================
-    // นำลิงก์ Web App URL /exec มาใส่ในบรรทัดด้านล่าง
+    // นำลิงก์ Web App URL (/exec) มาใส่ที่นี่
     // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbyJRyusqUWMv7iwosv9MXa-7HDUTeiG447l4_VWE0Or5um7k46k1KfhOeuameeUPMff/exec";
 
     let galleryData = [];
-    let currentFilter = 'all';
+    let currentMonthFilter = 'all';
+    let showPhotoCoverMode = false; // สลับโหมดการ์ดสีตามต้นฉบับ กับ โหมดโชว์รูปปก
+
+    // ชุดสีการ์ด 9 เฉดสี ถอดแบบจากภาพตัวอย่าง
+    const cardThemes = [
+      {
+        bg: "bg-gradient-to-br from-[#2d122b] to-[#1a0f24]",
+        border: "border-pink-500/30 hover:border-pink-400/60",
+        iconBg: "bg-pink-500 shadow-pink-500/30",
+        badgeBg: "bg-pink-950/80 text-pink-300 border-pink-500/30",
+        watermark: "text-pink-500/10",
+        icon: "camera"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#111c3d] to-[#0d152c]",
+        border: "border-blue-500/30 hover:border-blue-400/60",
+        iconBg: "bg-blue-600 shadow-blue-600/30",
+        badgeBg: "bg-blue-950/80 text-blue-300 border-blue-500/30",
+        watermark: "text-blue-500/10",
+        icon: "images"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#22143b] to-[#150f29]",
+        border: "border-purple-500/30 hover:border-purple-400/60",
+        iconBg: "bg-purple-600 shadow-purple-600/30",
+        badgeBg: "bg-purple-950/80 text-purple-300 border-purple-500/30",
+        watermark: "text-purple-500/10",
+        icon: "layout-grid"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#0c2627] to-[#091b1e]",
+        border: "border-teal-500/30 hover:border-teal-400/60",
+        iconBg: "bg-teal-500 shadow-teal-500/30",
+        badgeBg: "bg-teal-950/80 text-teal-300 border-teal-500/30",
+        watermark: "text-teal-500/10",
+        icon: "folder-heart"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#2e1d0f] to-[#1f150d]",
+        border: "border-amber-500/30 hover:border-amber-400/60",
+        iconBg: "bg-amber-500 shadow-amber-500/30",
+        badgeBg: "bg-amber-950/80 text-amber-300 border-amber-500/30",
+        watermark: "text-amber-500/10",
+        icon: "sparkles"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#2e1222] to-[#1d0d18]",
+        border: "border-rose-500/30 hover:border-rose-400/60",
+        iconBg: "bg-rose-500 shadow-rose-500/30",
+        badgeBg: "bg-rose-950/80 text-rose-300 border-rose-500/30",
+        watermark: "text-rose-500/10",
+        icon: "image"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#0e2433] to-[#0a1926]",
+        border: "border-cyan-500/30 hover:border-cyan-400/60",
+        iconBg: "bg-cyan-500 shadow-cyan-500/30",
+        badgeBg: "bg-cyan-950/80 text-cyan-300 border-cyan-500/30",
+        watermark: "text-cyan-500/10",
+        icon: "film"
+      },
+      {
+        bg: "bg-gradient-to-br from-[#19193b] to-[#101129]",
+        border: "border-indigo-500/30 hover:border-indigo-400/60",
+        iconBg: "bg-indigo-500 shadow-indigo-500/30",
+        badgeBg: "bg-indigo-950/80 text-indigo-300 border-indigo-500/30",
+        watermark: "text-indigo-500/10",
+        icon: "aperture"
+      }
+    ];
 
     async function loadData() {
       try {
@@ -149,190 +264,298 @@
 
         galleryData = data;
         document.getElementById('loading').classList.add('hidden');
-        buildSidebar();
-        renderGallery(galleryData);
+        updateStats();
+        buildMonthPills();
+        renderCards(galleryData);
       } catch (err) {
-        document.getElementById('loading').innerHTML = `<div class="text-red-500 font-medium bg-red-50 px-5 py-3 rounded-xl text-sm border border-red-200 shadow-sm flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> โหลดข้อมูลไม่สำเร็จ: ${err.message}</div>`;
-        lucide.createIcons();
-      }
-    }
-
-    // สร้างเมนูด้านซ้าย
-    function buildSidebar() {
-      const listContainer = document.getElementById('sidebarFilterList');
-      listContainer.innerHTML = '';
-      
-      galleryData.forEach(item => {
-        const btn = document.createElement('button');
-        btn.id = `btn-${item.month.replace(/\s+/g, '-')}`;
-        btn.className = `sidebar-btn w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-between text-emerald-100/70 hover:bg-emerald-800/60 hover:text-white group`;
-        btn.onclick = () => filterBySidebar(item.month);
-        
-        btn.innerHTML = `
-          <div class="flex items-center gap-3">
-            <i data-lucide="folder" class="w-4 h-4 text-emerald-400/70 group-hover:text-emerald-300 transition-colors"></i>
-            <span class="truncate">${item.month}</span>
+        document.getElementById('loading').innerHTML = `
+          <div class="bg-red-950/50 border border-red-500/40 text-red-200 px-6 py-4 rounded-2xl max-w-md text-center">
+            <p class="font-bold text-sm mb-1">ไม่สามารถดึงข้อมูลจาก Google Drive ได้</p>
+            <p class="text-xs text-red-300/80">${err.message}</p>
           </div>
-          <span class="text-[10px] bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-800/50 text-emerald-200 group-hover:bg-emerald-900 transition-colors">${item.events.length}</span>
         `;
-        listContainer.appendChild(btn);
-      });
-      lucide.createIcons();
-
-      // ผูก Event ช่องค้นหา
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      }
     }
 
-    // เมื่อกดคลิกเมนูซ้าย
-    function filterBySidebar(month) {
-      currentFilter = month;
-      const safeMonthId = month.replace(/\s+/g, '-');
-      
-      // อัปเดตสไตล์ปุ่ม
-      const btnAll = document.getElementById('btn-all');
-      if (month === 'all') {
-        btnAll.className = 'w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 mb-2 flex items-center gap-3 bg-white/10 text-white shadow-inner border border-white/20 backdrop-blur-sm hover:scale-[1.02]';
-      } else {
-        btnAll.className = 'w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 mb-2 flex items-center gap-3 text-emerald-100/70 hover:bg-emerald-800/60 hover:text-white';
+    function updateStats() {
+      let totalEvents = 0;
+      let totalPhotos = 0;
+      galleryData.forEach(group => {
+        totalEvents += group.events.length;
+        group.events.forEach(ev => {
+          totalPhotos += ev.photos.length;
+        });
+      });
+      document.getElementById('totalEventsCount').textContent = totalEvents.toLocaleString();
+      document.getElementById('totalPhotosCount').textContent = totalPhotos.toLocaleString();
+    }
+
+    function buildMonthPills() {
+      const container = document.getElementById('monthPillsContainer');
+      container.innerHTML = '';
+
+      const allBtn = document.createElement('button');
+      allBtn.id = 'pill-all';
+      allBtn.onclick = () => selectMonthPill('all');
+      allBtn.className = getPillClass(true);
+      allBtn.innerHTML = `<i data-lucide="layers" class="w-3.5 h-3.5"></i><span>ทุกเดือน / ทั้งหมด</span>`;
+      container.appendChild(allBtn);
+
+      galleryData.forEach(group => {
+        const btn = document.createElement('button');
+        btn.id = `pill-${group.month}`;
+        btn.onclick = () => selectMonthPill(group.month);
+        btn.className = getPillClass(false);
+        btn.innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>${group.month}</span>`;
+        container.appendChild(btn);
+      });
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      lucide.createIcons();
+    }
+
+    function getPillClass(isActive) {
+      if (isActive) {
+        return "px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 flex items-center gap-1.5 whitespace-nowrap transition-all";
       }
-      
-      document.querySelectorAll('.sidebar-btn').forEach(btn => {
-        const btnMonth = btn.id.replace('btn-', '');
-        if (btnMonth === safeMonthId) {
-          btn.className = 'sidebar-btn w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-between bg-white/10 text-white shadow-inner border border-white/20 backdrop-blur-sm hover:scale-[1.02] group';
-        } else {
-          btn.className = 'sidebar-btn w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-between text-emerald-100/70 hover:bg-emerald-800/60 hover:text-white group';
-        }
+      return "px-4 py-2 rounded-xl text-xs font-medium bg-slate-800/70 hover:bg-slate-800 text-slate-300 border border-slate-700/70 flex items-center gap-1.5 whitespace-nowrap transition-all";
+    }
+
+    function selectMonthPill(month) {
+      currentMonthFilter = month;
+      const allBtn = document.getElementById('pill-all');
+      if (allBtn) allBtn.className = getPillClass(month === 'all');
+
+      galleryData.forEach(group => {
+        const btn = document.getElementById(`pill-${group.month}`);
+        if (btn) btn.className = getPillClass(month === group.month);
       });
 
       applyFilters();
     }
 
-    // ฟังก์ชันประมวลผลการกรอง
+    function resetAllFilters() {
+      document.getElementById('searchInput').value = '';
+      selectMonthPill('all');
+    }
+
+    function toggleCoverMode() {
+      showPhotoCoverMode = !showPhotoCoverMode;
+      document.getElementById('modeToggleText').textContent = showPhotoCoverMode ? 'โหมดโชว์รูปปก' : 'โหมดการ์ดสี';
+      applyFilters();
+    }
+
     function applyFilters() {
-      const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
       let filtered = JSON.parse(JSON.stringify(galleryData));
 
-      if (currentFilter !== 'all') {
-        filtered = filtered.filter(item => item.month === currentFilter);
+      if (currentMonthFilter !== 'all') {
+        filtered = filtered.filter(g => g.month === currentMonthFilter);
       }
 
-      if (searchKeyword) {
+      if (keyword) {
         filtered = filtered.map(group => {
-          const matchingEvents = group.events.filter(event => event.name.toLowerCase().includes(searchKeyword));
-          return { ...group, events: matchingEvents };
+          const matchedEvents = group.events.filter(ev => 
+            ev.name.toLowerCase().includes(keyword) || group.month.toLowerCase().includes(keyword)
+          );
+          return { ...group, events: matchedEvents };
         }).filter(group => group.events.length > 0);
       }
 
-      renderGallery(filtered);
+      renderCards(filtered);
     }
 
-    // แสดงผลอัลบั้ม
-    function renderGallery(dataset) {
-      const container = document.getElementById('gallery-container');
+    function renderCards(dataset) {
+      const container = document.getElementById('cards-container');
       container.innerHTML = '';
 
       if (!dataset || dataset.length === 0) {
-        container.innerHTML = `<div class="text-center py-24 bg-white/60 backdrop-blur-md rounded-3xl border border-emerald-100 border-dashed shadow-sm"><div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="image-off" class="w-8 h-8 text-emerald-300"></i></div><p class="text-emerald-700 font-semibold">ไม่พบข้อมูลภาพที่ค้นหา</p></div>`;
+        container.innerHTML = `
+          <div class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800">
+            <i data-lucide="folder-x" class="w-10 h-10 text-slate-500 mx-auto mb-3"></i>
+            <p class="text-slate-300 font-semibold text-sm">ไม่พบอัลบั้มกิจกรรมที่ค้นหา</p>
+          </div>
+        `;
         lucide.createIcons();
         return;
       }
 
-      dataset.forEach((folderGroup, groupIndex) => {
-        const section = document.createElement('section');
-        section.className = 'space-y-6';
+      let colorIndex = 0;
 
-        // หัวข้อเดือน
+      dataset.forEach((group, gIdx) => {
+        const section = document.createElement('section');
+        section.className = 'space-y-4';
+
+        // หัวข้อประจำเดือน
         const header = document.createElement('div');
-        header.className = 'flex items-center gap-3 pb-3 border-b border-emerald-100/70';
+        header.className = 'flex items-center gap-2.5';
         header.innerHTML = `
-          <div class="p-2 bg-emerald-100/80 text-emerald-600 rounded-lg shadow-sm border border-emerald-200/50">
-            <i data-lucide="calendar-days" class="w-5 h-5"></i>
-          </div>
-          <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">${folderGroup.month}</h2>
+          <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+          <h3 class="text-sm font-bold text-slate-300 tracking-wide">${group.month}</h3>
+          <div class="flex-1 h-px bg-slate-800/80 ml-2"></div>
         `;
         section.appendChild(header);
 
-        const albumGrid = document.createElement('div');
-        albumGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+        // Grid 3 คอลัมน์เหมือนภาพต้นฉบับ
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
 
-        folderGroup.events.forEach((event, eventIndex) => {
-          const coverPhoto = event.photos[0]; 
-          const albumId = `album-${groupIndex}-${eventIndex}`;
+        group.events.forEach((event, eIdx) => {
+          const theme = cardThemes[colorIndex % cardThemes.length];
+          colorIndex++;
 
+          const coverUrl = event.photos[0] ? event.photos[0].thumbnailUrl : '';
           const card = document.createElement('div');
-          // ใส่ Hover effect เรืองแสงสีเขียว
-          card.className = 'bg-white rounded-2xl border border-emerald-50 shadow-sm hover:shadow-[0_8px_30px_rgba(16,185,129,0.12)] hover:border-emerald-200 transition-all duration-300 overflow-hidden flex flex-col group';
+          card.onclick = () => openAlbumModal(group.month, event);
 
-          card.innerHTML = `
-            <div class="relative aspect-[4/3] w-full overflow-hidden cursor-pointer bg-slate-100" onclick="toggleAlbum('${albumId}')">
-              <img src="${coverPhoto.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"/>
-              <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-900/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div class="absolute bottom-0 left-0 right-0 p-5">
-                <div class="flex justify-between items-end gap-3">
-                  <h3 class="text-white font-bold text-sm sm:text-base leading-snug drop-shadow-md line-clamp-2">${event.name}</h3>
-                  <div class="bg-emerald-500/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-sm whitespace-nowrap flex items-center gap-1.5 border border-emerald-400/30">
-                    <i data-lucide="images" class="w-3.5 h-3.5"></i> ${event.photos.length}
-                  </div>
+          if (!showPhotoCoverMode) {
+            // รูปแบบการ์ดสี Bento เหมือนภาพต้นฉบับ 100%
+            card.className = `relative overflow-hidden rounded-2xl p-5 border ${theme.bg} ${theme.border} cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group min-h-[138px] flex flex-col justify-between`;
+            card.innerHTML = `
+              <!-- ป้ายจำนวนภาพมุมขวาบน -->
+              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold border ${theme.badgeBg} z-10">
+                ${event.photos.length} ภาพ
+              </span>
+
+              <div class="flex items-start gap-4 relative z-10 pr-14">
+                <!-- กล่องไอคอนสีด้านซ้าย -->
+                <div class="w-11 h-11 rounded-xl ${theme.iconBg} flex items-center justify-center text-white shadow-lg flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                  <i data-lucide="${theme.icon}" class="w-5 h-5"></i>
+                </div>
+
+                <!-- ชื่อกิจกรรมและรายละเอียด -->
+                <div class="space-y-1.5">
+                  <h4 class="text-base font-bold text-white group-hover:text-sky-200 transition-colors line-clamp-2 leading-snug">
+                    ${event.name}
+                  </h4>
+                  <p class="text-xs text-slate-300/80 line-clamp-2 leading-relaxed">
+                    คลังภาพกิจกรรมประจำ${group.month} คลิกเพื่อเปิดดูรูปภาพและดาวน์โหลดไฟล์ความละเอียดสูง
+                  </p>
                 </div>
               </div>
-            </div>
 
-            <div id="${albumId}" class="hidden bg-emerald-50/30 border-t border-emerald-50 p-4">
-              <div class="grid grid-cols-3 gap-2.5 max-h-80 overflow-y-auto scrollbar-hide pr-1">
-                ${event.photos.map(photo => `
-                  <div class="aspect-square rounded-xl overflow-hidden relative group/item bg-slate-200 cursor-pointer border border-emerald-100 shadow-sm" onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')">
-                    <img src="${photo.thumbnailUrl}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500"/>
-                    <div class="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                      <div class="p-2 bg-white/20 rounded-full text-white backdrop-blur-sm">
-                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
-                      </div>
-                    </div>
-                  </div>
-                `).join('')}
+              <!-- ลายน้ำไอคอนขนาดใหญ่ด้านขวาล่างเหมือนต้นฉบับ -->
+              <div class="absolute -bottom-3 -right-2 ${theme.watermark} pointer-events-none transform -rotate-12 group-hover:scale-110 transition-transform duration-500">
+                <i data-lucide="${theme.icon}" class="w-24 h-24 stroke-[1.5]"></i>
               </div>
-              <div class="mt-3 pt-3 border-t border-emerald-100/50 text-center">
-                 <button onclick="toggleAlbum('${albumId}')" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 transition-colors bg-emerald-50 px-5 py-2 rounded-full shadow-sm flex items-center justify-center gap-1.5 mx-auto">
-                    <i data-lucide="chevron-up" class="w-4 h-4"></i> พับเก็บอัลบั้ม
-                 </button>
+            `;
+          } else {
+            // โหมดทางเลือก: โชว์ภาพปกผสมการ์ดสี
+            card.className = `relative overflow-hidden rounded-2xl border ${theme.border} bg-slate-900 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group h-48`;
+            card.innerHTML = `
+              <img src="${coverUrl}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75 group-hover:opacity-90" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0b101e] via-[#0b101e]/40 to-transparent"></div>
+              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold border ${theme.badgeBg}">
+                ${event.photos.length} ภาพ
+              </span>
+              <div class="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg ${theme.iconBg} flex items-center justify-center text-white flex-shrink-0">
+                  <i data-lucide="${theme.icon}" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white line-clamp-1">${event.name}</h4>
+                  <p class="text-[11px] text-slate-300">${group.month}</p>
+                </div>
               </div>
-            </div>
-          `;
-          
-          albumGrid.appendChild(card);
+            `;
+          }
+
+          grid.appendChild(card);
         });
 
-        section.appendChild(albumGrid);
+        section.appendChild(grid);
         container.appendChild(section);
       });
 
       lucide.createIcons();
     }
 
-    window.toggleAlbum = function(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle('hidden');
-    };
+    // เปิดหน้าต่างแสดงรูปภาพในอัลบั้ม
+    function openAlbumModal(monthName, eventObj) {
+      const modal = document.getElementById('albumModal');
+      document.getElementById('albumModalMonth').textContent = monthName;
+      document.getElementById('albumModalTitle').textContent = eventObj.name;
+      document.getElementById('albumModalCount').textContent = `${eventObj.photos.length} รูปภาพ`;
 
-    const modal = document.getElementById('lightboxModal');
-    const modalImg = document.getElementById('modalImage');
+      const grid = document.getElementById('albumModalGrid');
+      grid.innerHTML = eventObj.photos.map(photo => `
+        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-800 border border-slate-700/70 flex flex-col">
+          <img 
+            src="${photo.thumbnailUrl}" 
+            alt="${photo.name}" 
+            loading="lazy" 
+            referrerpolicy="no-referrer"
+            onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+          />
+          <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button 
+              onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')"
+              class="px-2.5 py-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-lg text-[11px] font-medium flex items-center gap-1"
+            >
+              <i data-lucide="zoom-in" class="w-3 h-3"></i> ขยาย
+            </button>
+            <a 
+              href="${photo.downloadUrl}" 
+              download="${photo.name}" 
+              target="_blank"
+              class="p-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg transition-colors"
+              title="ดาวน์โหลด"
+            >
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+      }, 10);
+      lucide.createIcons();
+    }
+
+    function closeAlbumModal() {
+      const modal = document.getElementById('albumModal');
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    // ระบบเปิดภาพขยายเต็มจอ (Lightbox)
     function openLightbox(imgSrc, name, downloadUrl) {
-      modalImg.src = imgSrc;
+      const modal = document.getElementById('lightboxModal');
+      document.getElementById('modalImage').src = imgSrc;
       document.getElementById('modalImageName').textContent = name;
-      document.getElementById('modalDownloadBtn').href = downloadUrl;
-      document.getElementById('modalDownloadBtn').setAttribute('download', name);
+      const dlBtn = document.getElementById('modalDownloadBtn');
+      dlBtn.href = downloadUrl;
+      dlBtn.setAttribute('download', name);
+
       modal.classList.remove('hidden');
       setTimeout(() => {
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100', 'pointer-events-auto');
       }, 10);
     }
-    window.closeLightbox = function() {
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
       modal.classList.remove('opacity-100', 'pointer-events-auto');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => { modal.classList.add('hidden'); modalImg.src = ''; }, 300);
-    };
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('modalImage').src = '';
+      }, 200);
+    }
+
+    // ปิดหน้าต่างเมื่อคลิกพื้นที่ว่าง
+    document.getElementById('albumModal').addEventListener('click', (e) => {
+      if (e.target.id === 'albumModal') closeAlbumModal();
+    });
+    document.getElementById('lightboxModal').addEventListener('click', (e) => {
+      if (e.target.id === 'lightboxModal') closeLightbox();
+    });
 
     loadData();
   </script>
