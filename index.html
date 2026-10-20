@@ -18,8 +18,7 @@
       background-color: #0b101e;
       color: #f1f5f9;
     }
-    /* แสงเรืองด้านบนสุดเหมือนต้นฉบับ */
-    .top- radial-glow {
+    .top-radial-glow {
       background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.14) 0%, rgba(11, 16, 30, 0) 70%);
     }
     .scrollbar-custom::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -28,93 +27,74 @@
     .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
   </style>
 </head>
-<body class="min-h-screen antialiased selection:bg-sky-500 selection:text-white relative overflow-x-hidden pb-20">
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white relative overflow-x-hidden">
 
   <!-- พื้นหลัง Glow ด้านบน -->
   <div class="fixed inset-0 pointer-events-none top-radial-glow -z-10"></div>
   <div class="fixed -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-  <!-- แถบเมนูด้านบน (Navbar) -->
-  <header class="border-b border-slate-800/80 bg-[#0b101e]/80 backdrop-blur-md sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
-      
-      <!-- โลโก้และชื่อหน่วยงาน -->
-      <div class="flex items-center gap-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-lg shadow-sky-500/10 flex-shrink-0">
-          <img 
-            src="https://s.rsec3sk.workers.dev/logo.png" 
-            alt="Logo" 
-            class="w-full h-full object-contain"
-            onerror="this.src='https://placehold.co/100x100?text=LOGO'"
-          />
-        </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold text-sky-400 tracking-wide leading-tight">คลังภาพโสตทัศนูปกรณ์</h1>
-          <p class="text-xs text-slate-400 font-normal">ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา</p>
-        </div>
-      </div>
-
-      <!-- ปุ่มเมนูด้านขวา -->
-      <div class="flex items-center gap-2.5">
-        <button onclick="resetAllFilters()" class="w-10 h-10 rounded-full border border-slate-700/80 bg-slate-800/50 hover:bg-slate-700/60 flex items-center justify-center text-slate-300 transition-all" title="หน้าแรก / รีเซ็ตตัวกรอง">
-          <i data-lucide="home" class="w-4 h-4"></i>
-        </button>
-        <button onclick="toggleCoverMode()" id="modeToggleBtn" class="px-4 py-2 rounded-full border border-slate-700/80 bg-slate-800/50 hover:bg-slate-700/60 flex items-center gap-2 text-xs font-medium text-slate-300 transition-all">
-          <i data-lucide="Sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span id="modeToggleText">โหมดการ์ดสี</span>
-        </button>
-      </div>
-
-    </div>
-  </header>
+  <!-- ฟิลเตอร์ SVG สำหรับตัดพื้นหลังสีดำของโลโก้ออก 100% -->
+  <svg width="0" height="0" class="fixed pointer-events-none">
+    <filter id="remove-black-bg" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="
+        1   0   0   0   0
+        0   1   0   0   0
+        0   0   1   0   0
+        3.5 3.5 3.5 0  -0.65
+      " />
+    </filter>
+  </svg>
 
   <!-- เนื้อหาหลัก -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-16">
 
-    <!-- ส่วนหัว Hero Section แบบโลโก้ตรงกลางไร้พื้นหลัง -->
-<section class="mb-10 text-center flex flex-col items-center">
-  <!-- โลโก้ตรงกลางไร้พื้นหลัง -->
-  <div class="w-24 h-24 sm:w-28 sm:h-28 mb-4 flex items-center justify-center">
-    <img 
-      src="https://s.rsec3sk.workers.dev/logo.png" 
-      alt="โลโก้ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา" 
-      class="w-full h-full object-contain select-none"
-      style="filter: url(#remove-black-bg);"
-    />
-  </div>
+    <!-- ส่วนหัว Hero Section โลโก้ตรงกลางไร้พื้นหลัง -->
+    <section class="mb-10 text-center flex flex-col items-center">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 mb-4 flex items-center justify-center">
+        <img 
+          id="heroLogo"
+          alt="โลโก้ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา" 
+          class="w-full h-full object-contain select-none"
+          style="filter: url(#remove-black-bg);"
+        />
+      </div>
 
-  <!-- ชื่อหน่วยงานและชื่อระบบ -->
-  <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-    ศูนย์การศึกษาพิเศษ
-  </h2>
-  <p class="text-lg sm:text-xl font-bold text-sky-400 mt-0.5 mb-2">
-    เขตการศึกษา 3 จังหวัดสงขลา
-  </p>
-  <p class="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed mb-6">
-    ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์ รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานไว้ในที่เดียว
-  </p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+        ศูนย์การศึกษาพิเศษ
+      </h2>
+      <p class="text-lg sm:text-xl font-bold text-sky-400 mt-0.5 mb-2">
+        เขตการศึกษา 3 จังหวัดสงขลา
+      </p>
+      <p class="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed mb-6">
+        ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์ รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานไว้ในที่เดียว
+      </p>
 
-  <!-- ป้ายสถานะ (Stat Pills) -->
-  <div class="flex flex-wrap items-center justify-center gap-3">
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-      <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
-      <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
-    </div>
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-      <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
-      <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
-    </div>
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
-    </div>
-  </div>
-</section>
+      <!-- แถบปุ่มสลับโหมด และ ป้ายสถานะ (Stat Pills) -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <!-- ปุ่มสลับโหมดด้านหน้าสุด -->
+        <button onclick="toggleCoverMode()" id="modeToggleBtn" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-500/40 bg-slate-800/90 hover:bg-slate-700/80 hover:border-sky-400 text-xs font-medium text-white shadow-lg shadow-sky-500/10 transition-all cursor-pointer active:scale-95">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span id="modeToggleText">โหมดการ์ดสี</span>
+        </button>
+
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
+          <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
+        </div>
+      </div>
+    </section>
 
     <!-- แถบค้นหาและตัวกรองเดือน/ปี พ.ศ. -->
     <section class="mb-8 space-y-4">
       <div class="flex flex-col sm:flex-row gap-3">
-        <!-- ช่องค้นหา -->
         <div class="relative flex-1">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
           <input 
@@ -127,9 +107,7 @@
       </div>
 
       <!-- ปุ่มเลือกเดือนและปี พ.ศ. (Month Pills) -->
-      <div id="monthPillsContainer" class="flex items-center gap-2 overflow-x-auto scrollbar-custom pb-2">
-        <!-- สร้างด้วย JS -->
-      </div>
+      <div id="monthPillsContainer" class="flex items-center gap-2 overflow-x-auto scrollbar-custom pb-2"></div>
     </section>
 
     <!-- สถานะกำลังโหลด -->
@@ -138,18 +116,36 @@
       <p class="text-sm text-slate-400">กำลังซิงค์ข้อมูลอัลบั้มภาพจาก Google Drive...</p>
     </div>
 
-    <!-- ตารางการ์ดกิจกรรม (Bento Grid 3 คอลัมน์เหมือนต้นฉบับ) -->
+    <!-- ตารางการ์ดกิจกรรม (Bento Grid 3 คอลัมน์) -->
     <div id="cards-container" class="space-y-10"></div>
 
   </main>
 
-  <!-- ========================================================= -->
+  <!-- ส่วนท้ายเว็บไซต์ (Footer) -->
+  <footer class="border-t border-slate-800/80 bg-[#0b101e]/90 backdrop-blur-md py-6 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0">
+          <i data-lucide="code-2" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <p class="text-xs sm:text-sm font-medium text-slate-300">
+            พัฒนาโดย <span class="text-sky-400 font-semibold">นายวราห์ หมายดี</span> พนักงานราชการ
+          </p>
+          <p class="text-[11px] text-slate-500">
+            ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา
+          </p>
+        </div>
+      </div>
+      <div class="text-[11px] text-slate-500">
+        ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์
+      </div>
+    </div>
+  </footer>
+
   <!-- Modal หน้าต่างแสดงรูปภาพทั้งหมดในอัลบั้มเมื่อคลิกการ์ด -->
-  <!-- ========================================================= -->
   <div id="albumModal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-200">
     <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      
-      <!-- หัวหน้าต่างอัลบั้ม -->
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-4 bg-slate-900/60">
         <div>
           <span id="albumModalMonth" class="text-[11px] font-semibold text-sky-400 uppercase tracking-wider"></span>
@@ -162,18 +158,11 @@
           </button>
         </div>
       </div>
-
-      <!-- รายการรูปภาพข้างในอัลบั้ม -->
-      <div id="albumModalGrid" class="p-6 overflow-y-auto scrollbar-custom grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <!-- รูปภาพจะถูกใส่ที่นี่ -->
-      </div>
-
+      <div id="albumModalGrid" class="p-6 overflow-y-auto scrollbar-custom grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
     </div>
   </div>
 
-  <!-- ========================================================= -->
   <!-- Lightbox Modal ซูมดูรูปภาพขนาดเต็มจอ -->
-  <!-- ========================================================= -->
   <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0 pointer-events-none">
     <div class="relative max-w-6xl w-full flex flex-col items-center">
       <div class="w-full flex justify-between items-center mb-3 px-2">
@@ -193,16 +182,46 @@
   </div>
 
   <script>
-    // ==========================================
-    // นำลิงก์ Web App URL (/exec) มาใส่ที่นี่
-    // ==========================================
+    // ====================================================================
+    // 1. ตั้งค่ารูปโลโก้ (วางไฟล์รูปในโฟลเดอร์เดียวกัน หรือใส่ลิงก์รูปในเครื่องหมายคำพูด)
+    // ====================================================================
+    const CUSTOM_LOGO_URL = "https://s.rsec3sk.workers.dev/logo.png"; 
+
+    (function initLogos() {
+      const candidates = [
+        CUSTOM_LOGO_URL,
+        "logo.png",
+        "logo.jpg",
+        "303928-removebg-preview (1).jpg",
+        "303928-removebg-preview.jpg"
+      ].filter(Boolean);
+
+      const heroLogo = document.getElementById("heroLogo");
+
+      function tryLoadLogo(index) {
+        if (index >= candidates.length) return;
+        const testImg = new Image();
+        testImg.onload = function() {
+          if (heroLogo) heroLogo.src = candidates[index];
+        };
+        testImg.onerror = function() {
+          tryLoadLogo(index + 1);
+        };
+        testImg.src = candidates[index];
+      }
+
+      tryLoadLogo(0);
+    })();
+
+    // ====================================================================
+    // 2. นำลิงก์ Web App URL (/exec) มาใส่ที่นี่
+    // ====================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbyJRyusqUWMv7iwosv9MXa-7HDUTeiG447l4_VWE0Or5um7k46k1KfhOeuameeUPMff/exec";
 
     let galleryData = [];
     let currentMonthFilter = 'all';
-    let showPhotoCoverMode = false; // สลับโหมดการ์ดสีตามต้นฉบับ กับ โหมดโชว์รูปปก
+    let showPhotoCoverMode = false;
 
-    // ชุดสีการ์ด 9 เฉดสี ถอดแบบจากภาพตัวอย่าง
     const cardThemes = [
       {
         bg: "bg-gradient-to-br from-[#2d122b] to-[#1a0f24]",
@@ -272,6 +291,7 @@
 
     async function loadData() {
       try {
+        lucide.createIcons();
         const response = await fetch(API_URL);
         const data = await response.json();
         if (data.error) throw new Error(data.error);
@@ -348,11 +368,6 @@
       applyFilters();
     }
 
-    function resetAllFilters() {
-      document.getElementById('searchInput').value = '';
-      selectMonthPill('all');
-    }
-
     function toggleCoverMode() {
       showPhotoCoverMode = !showPhotoCoverMode;
       document.getElementById('modeToggleText').textContent = showPhotoCoverMode ? 'โหมดโชว์รูปปก' : 'โหมดการ์ดสี';
@@ -396,11 +411,10 @@
 
       let colorIndex = 0;
 
-      dataset.forEach((group, gIdx) => {
+      dataset.forEach((group) => {
         const section = document.createElement('section');
         section.className = 'space-y-4';
 
-        // หัวข้อประจำเดือน
         const header = document.createElement('div');
         header.className = 'flex items-center gap-2.5';
         header.innerHTML = `
@@ -410,11 +424,10 @@
         `;
         section.appendChild(header);
 
-        // Grid 3 คอลัมน์เหมือนภาพต้นฉบับ
         const grid = document.createElement('div');
         grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
 
-        group.events.forEach((event, eIdx) => {
+        group.events.forEach((event) => {
           const theme = cardThemes[colorIndex % cardThemes.length];
           colorIndex++;
 
@@ -423,21 +436,17 @@
           card.onclick = () => openAlbumModal(group.month, event);
 
           if (!showPhotoCoverMode) {
-            // รูปแบบการ์ดสี Bento เหมือนภาพต้นฉบับ 100%
             card.className = `relative overflow-hidden rounded-2xl p-5 border ${theme.bg} ${theme.border} cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group min-h-[138px] flex flex-col justify-between`;
             card.innerHTML = `
-              <!-- ป้ายจำนวนภาพมุมขวาบน -->
               <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold border ${theme.badgeBg} z-10">
                 ${event.photos.length} ภาพ
               </span>
 
               <div class="flex items-start gap-4 relative z-10 pr-14">
-                <!-- กล่องไอคอนสีด้านซ้าย -->
                 <div class="w-11 h-11 rounded-xl ${theme.iconBg} flex items-center justify-center text-white shadow-lg flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                   <i data-lucide="${theme.icon}" class="w-5 h-5"></i>
                 </div>
 
-                <!-- ชื่อกิจกรรมและรายละเอียด -->
                 <div class="space-y-1.5">
                   <h4 class="text-base font-bold text-white group-hover:text-sky-200 transition-colors line-clamp-2 leading-snug">
                     ${event.name}
@@ -448,13 +457,11 @@
                 </div>
               </div>
 
-              <!-- ลายน้ำไอคอนขนาดใหญ่ด้านขวาล่างเหมือนต้นฉบับ -->
               <div class="absolute -bottom-3 -right-2 ${theme.watermark} pointer-events-none transform -rotate-12 group-hover:scale-110 transition-transform duration-500">
                 <i data-lucide="${theme.icon}" class="w-24 h-24 stroke-[1.5]"></i>
               </div>
             `;
           } else {
-            // โหมดทางเลือก: โชว์ภาพปกผสมการ์ดสี
             card.className = `relative overflow-hidden rounded-2xl border ${theme.border} bg-slate-900 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group h-48`;
             card.innerHTML = `
               <img src="${coverUrl}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75 group-hover:opacity-90" />
@@ -484,7 +491,6 @@
       lucide.createIcons();
     }
 
-    // เปิดหน้าต่างแสดงรูปภาพในอัลบั้ม
     function openAlbumModal(monthName, eventObj) {
       const modal = document.getElementById('albumModal');
       document.getElementById('albumModalMonth').textContent = monthName;
@@ -537,7 +543,6 @@
       setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    // ระบบเปิดภาพขยายเต็มจอ (Lightbox)
     function openLightbox(imgSrc, name, downloadUrl) {
       const modal = document.getElementById('lightboxModal');
       document.getElementById('modalImage').src = imgSrc;
@@ -563,7 +568,6 @@
       }, 200);
     }
 
-    // ปิดหน้าต่างเมื่อคลิกพื้นที่ว่าง
     document.getElementById('albumModal').addEventListener('click', (e) => {
       if (e.target.id === 'albumModal') closeAlbumModal();
     });
