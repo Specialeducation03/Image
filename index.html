@@ -71,31 +71,45 @@
   <!-- เนื้อหาหลัก -->
   <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
 
-    <!-- ส่วนหัว Hero Section -->
-    <section class="mb-10">
-      <h2 class="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-sky-300 via-blue-200 to-indigo-200 bg-clip-text text-transparent tracking-tight mb-4">
-        ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์
-      </h2>
-      <p class="text-slate-400 text-sm sm:text-base max-w-3xl leading-relaxed mb-6">
-        รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานของศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา ไว้ในที่เดียว ช่วยให้ค้นหา เปิดดูภาพความละเอียดสูง และดาวน์โหลดนำไปใช้งานได้อย่างสะดวกรวดเร็วผ่านเว็บ
-      </p>
+    <!-- ส่วนหัว Hero Section แบบโลโก้ตรงกลางไร้พื้นหลัง -->
+<section class="mb-10 text-center flex flex-col items-center">
+  <!-- โลโก้ตรงกลางไร้พื้นหลัง -->
+  <div class="w-24 h-24 sm:w-28 sm:h-28 mb-4 flex items-center justify-center">
+    <img 
+      src="https://drive.google.com/file/d/16ja-3KlC48Hs9pkMi6F9hJAfqwG7Obwf/view?usp=sharing" 
+      alt="โลโก้ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา" 
+      class="w-full h-full object-contain select-none"
+      style="filter: url(#remove-black-bg);"
+    />
+  </div>
 
-      <!-- ป้ายสถานะ (Stat Pills) -->
-      <div class="flex flex-wrap items-center gap-3">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
-        </div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
-          <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
-        </div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
-        </div>
-      </div>
-    </section>
+  <!-- ชื่อหน่วยงานและชื่อระบบ -->
+  <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+    ศูนย์การศึกษาพิเศษ
+  </h2>
+  <p class="text-lg sm:text-xl font-bold text-sky-400 mt-0.5 mb-2">
+    เขตการศึกษา 3 จังหวัดสงขลา
+  </p>
+  <p class="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed mb-6">
+    ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์ รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานไว้ในที่เดียว
+  </p>
+
+  <!-- ป้ายสถานะ (Stat Pills) -->
+  <div class="flex flex-wrap items-center justify-center gap-3">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+      <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
+      <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
+    </div>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+      <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
+      <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
+    </div>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
+    </div>
+  </div>
+</section>
 
     <!-- แถบค้นหาและตัวกรองเดือน/ปี พ.ศ. -->
     <section class="mb-8 space-y-4">
