@@ -15,65 +15,83 @@
   <style>
     body {
       font-family: 'Prompt', sans-serif;
-      background-color: #0b101e;
-      color: #f1f5f9;
+      background-color: #f8fafc;
+      color: #1e293b;
     }
-    .top-radial-glow {
-      background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.14) 0%, rgba(11, 16, 30, 0) 70%);
+    .top-light-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.18) 0%, rgba(248, 250, 252, 0) 70%);
     }
     .scrollbar-custom::-webkit-scrollbar { width: 6px; height: 6px; }
-    .scrollbar-custom::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-    .scrollbar-custom::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.4); border-radius: 9999px; }
-    .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
+    .scrollbar-custom::-webkit-scrollbar-track { background: rgba(241, 245, 249, 0.8); }
+    .scrollbar-custom::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.5); border-radius: 9999px; }
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.7); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white relative overflow-x-hidden">
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-sky-50/80 via-white to-indigo-50/50 antialiased selection:bg-sky-500 selection:text-white relative overflow-x-hidden">
 
-  <!-- พื้นหลัง Glow ด้านบน -->
-  <div class="fixed inset-0 pointer-events-none top-radial-glow -z-10"></div>
-  <div class="fixed -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+  <!-- พื้นหลังแสงสว่างพาสเทลด้านบน -->
+  <div class="fixed inset-0 pointer-events-none top-light-glow -z-10"></div>
+  <div class="fixed -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[360px] bg-gradient-to-r from-sky-200/40 via-emerald-100/30 to-indigo-200/40 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+
+  <!-- ฟิลเตอร์ SVG ตัดพื้นหลังสีดำพร้อมเก็บขอบละเอียดสำหรับวางบนพื้นหลังโทนสว่าง -->
+  <svg width="0" height="0" class="fixed pointer-events-none">
+    <filter id="remove-black-bg" color-interpolation-filters="sRGB">
+      <!-- คำนวณความโปร่งใสจากความสว่างของเม็ดสี -->
+      <feColorMatrix type="matrix" values="
+        1   0   0   0   0
+        0   1   0   0   0
+        0   0   1   0   0
+        4   4   4   0  -1.1
+      " result="keyed" />
+      <!-- เก็บขอบดำขนาดเล็ก (Anti-alias fringe) ให้เนียนบนพื้นขาว -->
+      <feMorphology operator="erode" radius="0.5" in="keyed" result="eroded" />
+      <feComposite in="SourceGraphic" in2="eroded" operator="in" />
+    </filter>
+  </svg>
+
   <!-- เนื้อหาหลัก -->
   <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-16">
 
     <!-- ส่วนหัว Hero Section โลโก้ตรงกลางไร้พื้นหลัง -->
     <section class="mb-10 text-center flex flex-col items-center">
-      <div class="w-24 h-24 sm:w-28 sm:h-28 mb-4 flex items-center justify-center">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 mb-4 flex items-center justify-center relative">
+        <div class="absolute inset-0 bg-sky-300/25 rounded-full blur-2xl -z-10"></div>
         <img 
           id="heroLogo"
           alt="โลโก้ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา" 
-          class="w-full h-full object-contain select-none"
+          class="w-full h-full object-contain select-none drop-shadow-sm"
           style="filter: url(#remove-black-bg);"
         />
       </div>
 
-      <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
         ศูนย์การศึกษาพิเศษ
       </h2>
-      <p class="text-lg sm:text-xl font-bold text-sky-400 mt-0.5 mb-2">
+      <p class="text-lg sm:text-xl font-bold text-sky-600 mt-0.5 mb-2">
         เขตการศึกษา 3 จังหวัดสงขลา
       </p>
-      <p class="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed mb-6">
+      <p class="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed mb-6">
         ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์ รวบรวมภาพถ่ายกิจกรรม โครงการ และการดำเนินงานไว้ในที่เดียว
       </p>
 
-      <!-- แถบปุ่มสลับโหมด และ ป้ายสถานะ (Stat Pills) -->
-      <div class="flex flex-wrap items-center justify-center gap-3">
+      <!-- แถบปุ่มสลับโหมด (ด้านหน้าสุด) และ ป้ายสถานะ -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
         <!-- ปุ่มสลับโหมดด้านหน้าสุด -->
-        <button onclick="toggleCoverMode()" id="modeToggleBtn" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-500/40 bg-slate-800/90 hover:bg-slate-700/80 hover:border-sky-400 text-xs font-medium text-white shadow-lg shadow-sky-500/10 transition-all cursor-pointer active:scale-95">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+        <button onclick="toggleCoverMode()" id="modeToggleBtn" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-300 bg-white hover:bg-sky-50 text-xs font-semibold text-sky-700 shadow-sm hover:shadow transition-all cursor-pointer active:scale-95">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
           <span id="modeToggleText">โหมดการ์ดสี</span>
         </button>
 
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-white">0</strong> อัลบั้ม</span>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-200/90 shadow-sm text-xs text-slate-600">
+          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-sky-500"></i>
+          <span>กิจกรรมทั้งหมด <strong id="totalEventsCount" class="text-slate-900">0</strong> อัลบั้ม</span>
         </div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <i data-lucide="images" class="w-3.5 h-3.5 text-purple-400"></i>
-          <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-white">0</strong> ภาพ</span>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-200/90 shadow-sm text-xs text-slate-600">
+          <i data-lucide="images" class="w-3.5 h-3.5 text-purple-500"></i>
+          <span>รูปภาพทั้งหมด <strong id="totalPhotosCount" class="text-slate-900">0</strong> ภาพ</span>
         </div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/70 border border-slate-700/70 text-xs text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-200/90 shadow-sm text-xs text-slate-600">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>เชื่อมต่อฐานข้อมูลออนไลน์</span>
         </div>
       </div>
@@ -88,7 +106,7 @@
             type="text" 
             id="searchInput" 
             placeholder="ค้นหาชื่อกิจกรรม หรือชื่อแฟ้มภาพ..." 
-            class="w-full pl-11 pr-4 py-2.5 bg-slate-900/90 hover:bg-slate-900 focus:bg-slate-900 text-sm text-white placeholder-slate-500 rounded-xl border border-slate-800 focus:border-sky-500/60 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
+            class="w-full pl-11 pr-4 py-3 bg-white hover:bg-white focus:bg-white text-sm text-slate-800 placeholder-slate-400 rounded-2xl border border-slate-200/90 shadow-sm focus:border-sky-400 focus:ring-4 focus:ring-sky-500/10 outline-none transition-all"
           />
         </div>
       </div>
@@ -99,8 +117,8 @@
 
     <!-- สถานะกำลังโหลด -->
     <div id="loading" class="flex flex-col items-center justify-center py-24 space-y-4">
-      <div class="w-11 h-11 border-4 border-slate-800 border-t-sky-400 rounded-full animate-spin"></div>
-      <p class="text-sm text-slate-400">กำลังซิงค์ข้อมูลอัลบั้มภาพจาก Google Drive...</p>
+      <div class="w-11 h-11 border-4 border-sky-100 border-t-sky-500 rounded-full animate-spin"></div>
+      <p class="text-sm font-medium text-slate-500">กำลังซิงค์ข้อมูลอัลบั้มภาพจาก Google Drive...</p>
     </div>
 
     <!-- ตารางการ์ดกิจกรรม (Bento Grid 3 คอลัมน์) -->
@@ -109,62 +127,62 @@
   </main>
 
   <!-- ส่วนท้ายเว็บไซต์ (Footer) -->
-  <footer class="border-t border-slate-800/80 bg-[#0b101e]/90 backdrop-blur-md py-6 mt-auto">
+  <footer class="border-t border-slate-200/80 bg-white/80 backdrop-blur-md py-6 mt-auto">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200/70 flex items-center justify-center text-sky-600 flex-shrink-0">
           <i data-lucide="code-2" class="w-4 h-4"></i>
         </div>
         <div>
-          <p class="text-xs sm:text-sm font-medium text-slate-300">
-            พัฒนาโดย <span class="text-sky-400 font-semibold">นายวราห์ หมายดี</span> พนักงานราชการ
+          <p class="text-xs sm:text-sm font-medium text-slate-700">
+            พัฒนาโดย <span class="text-sky-600 font-bold">นายวราห์ หมายดี</span> พนักงานราชการ
           </p>
           <p class="text-[11px] text-slate-500">
             ศูนย์การศึกษาพิเศษ เขตการศึกษา 3 จังหวัดสงขลา
           </p>
         </div>
       </div>
-      <div class="text-[11px] text-slate-500">
+      <div class="text-[11px] text-slate-400 font-medium">
         ระบบจัดเก็บรูปภาพงานโสตทัศนูปกรณ์
       </div>
     </div>
   </footer>
 
   <!-- Modal หน้าต่างแสดงรูปภาพทั้งหมดในอัลบั้มเมื่อคลิกการ์ด -->
-  <div id="albumModal" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-4 bg-slate-900/60">
+  <div id="albumModal" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 bg-slate-50/80">
         <div>
-          <span id="albumModalMonth" class="text-[11px] font-semibold text-sky-400 uppercase tracking-wider"></span>
-          <h3 id="albumModalTitle" class="text-lg sm:text-xl font-bold text-white mt-0.5"></h3>
+          <span id="albumModalMonth" class="text-[11px] font-bold text-sky-600 uppercase tracking-wider"></span>
+          <h3 id="albumModalTitle" class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5"></h3>
         </div>
         <div class="flex items-center gap-3">
-          <span id="albumModalCount" class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700"></span>
-          <button onclick="closeAlbumModal()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
+          <span id="albumModalCount" class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-semibold border border-sky-200/60"></span>
+          <button onclick="closeAlbumModal()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
       </div>
-      <div id="albumModalGrid" class="p-6 overflow-y-auto scrollbar-custom grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+      <div id="albumModalGrid" class="p-6 overflow-y-auto scrollbar-custom grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 bg-slate-50/30"></div>
     </div>
   </div>
 
   <!-- Lightbox Modal ซูมดูรูปภาพขนาดเต็มจอ -->
-  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0 pointer-events-none">
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex items-center justify-center p-4 transition-opacity duration-200 opacity-0 pointer-events-none">
     <div class="relative max-w-6xl w-full flex flex-col items-center">
       <div class="w-full flex justify-between items-center mb-3 px-2">
-        <p id="modalImageName" class="text-sm font-medium text-slate-300 truncate max-w-[65%]"></p>
+        <p id="modalImageName" class="text-sm font-medium text-white truncate max-w-[65%]"></p>
         <div class="flex items-center gap-2.5">
-          <a id="modalDownloadBtn" href="#" target="_blank" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-500/20">
+          <a id="modalDownloadBtn" href="#" target="_blank" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-500/20">
             <i data-lucide="download" class="w-4 h-4"></i>
             <span>ดาวน์โหลดภาพนี้</span>
           </a>
-          <button onclick="closeLightbox()" class="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-all" title="ปิดหน้าต่าง">
+          <button onclick="closeLightbox()" class="p-2 bg-white/15 hover:bg-white/25 rounded-xl text-white transition-all" title="ปิดหน้าต่าง">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
       </div>
-      <img id="modalImage" src="" alt="preview" class="max-h-[82vh] object-contain rounded-2xl shadow-2xl select-none border border-white/10" />
+      <img id="modalImage" src="" alt="preview" class="max-h-[82vh] object-contain rounded-2xl shadow-2xl select-none border border-white/15" />
     </div>
   </div>
 
@@ -209,69 +227,78 @@
     let currentMonthFilter = 'all';
     let showPhotoCoverMode = false;
 
+    // ชุดสีการ์ดโทนสว่างพาสเทล (Light Pastel Bento Themes)
     const cardThemes = [
       {
-        bg: "bg-gradient-to-br from-[#2d122b] to-[#1a0f24]",
-        border: "border-pink-500/30 hover:border-pink-400/60",
-        iconBg: "bg-pink-500 shadow-pink-500/30",
-        badgeBg: "bg-pink-950/80 text-pink-300 border-pink-500/30",
+        bg: "bg-gradient-to-br from-pink-50 via-white to-rose-50/70",
+        border: "border-pink-200/80 hover:border-pink-400",
+        iconBg: "bg-pink-500 shadow-pink-500/25",
+        badgeBg: "bg-pink-100 text-pink-700 border-pink-200",
         watermark: "text-pink-500/10",
+        titleHover: "group-hover:text-pink-600",
         icon: "camera"
       },
       {
-        bg: "bg-gradient-to-br from-[#111c3d] to-[#0d152c]",
-        border: "border-blue-500/30 hover:border-blue-400/60",
-        iconBg: "bg-blue-600 shadow-blue-600/30",
-        badgeBg: "bg-blue-950/80 text-blue-300 border-blue-500/30",
+        bg: "bg-gradient-to-br from-blue-50 via-white to-sky-50/70",
+        border: "border-blue-200/80 hover:border-blue-400",
+        iconBg: "bg-blue-600 shadow-blue-600/25",
+        badgeBg: "bg-blue-100 text-blue-700 border-blue-200",
         watermark: "text-blue-500/10",
+        titleHover: "group-hover:text-blue-600",
         icon: "images"
       },
       {
-        bg: "bg-gradient-to-br from-[#22143b] to-[#150f29]",
-        border: "border-purple-500/30 hover:border-purple-400/60",
-        iconBg: "bg-purple-600 shadow-purple-600/30",
-        badgeBg: "bg-purple-950/80 text-purple-300 border-purple-500/30",
+        bg: "bg-gradient-to-br from-purple-50 via-white to-violet-50/70",
+        border: "border-purple-200/80 hover:border-purple-400",
+        iconBg: "bg-purple-600 shadow-purple-600/25",
+        badgeBg: "bg-purple-100 text-purple-700 border-purple-200",
         watermark: "text-purple-500/10",
+        titleHover: "group-hover:text-purple-600",
         icon: "layout-grid"
       },
       {
-        bg: "bg-gradient-to-br from-[#0c2627] to-[#091b1e]",
-        border: "border-teal-500/30 hover:border-teal-400/60",
-        iconBg: "bg-teal-500 shadow-teal-500/30",
-        badgeBg: "bg-teal-950/80 text-teal-300 border-teal-500/30",
+        bg: "bg-gradient-to-br from-teal-50 via-white to-emerald-50/70",
+        border: "border-teal-200/80 hover:border-teal-400",
+        iconBg: "bg-teal-500 shadow-teal-500/25",
+        badgeBg: "bg-teal-100 text-teal-700 border-teal-200",
         watermark: "text-teal-500/10",
+        titleHover: "group-hover:text-teal-600",
         icon: "folder-heart"
       },
       {
-        bg: "bg-gradient-to-br from-[#2e1d0f] to-[#1f150d]",
-        border: "border-amber-500/30 hover:border-amber-400/60",
-        iconBg: "bg-amber-500 shadow-amber-500/30",
-        badgeBg: "bg-amber-950/80 text-amber-300 border-amber-500/30",
+        bg: "bg-gradient-to-br from-amber-50 via-white to-orange-50/70",
+        border: "border-amber-200/80 hover:border-amber-400",
+        iconBg: "bg-amber-500 shadow-amber-500/25",
+        badgeBg: "bg-amber-100 text-amber-800 border-amber-200",
         watermark: "text-amber-500/10",
+        titleHover: "group-hover:text-amber-600",
         icon: "sparkles"
       },
       {
-        bg: "bg-gradient-to-br from-[#2e1222] to-[#1d0d18]",
-        border: "border-rose-500/30 hover:border-rose-400/60",
-        iconBg: "bg-rose-500 shadow-rose-500/30",
-        badgeBg: "bg-rose-950/80 text-rose-300 border-rose-500/30",
+        bg: "bg-gradient-to-br from-rose-50 via-white to-pink-50/70",
+        border: "border-rose-200/80 hover:border-rose-400",
+        iconBg: "bg-rose-500 shadow-rose-500/25",
+        badgeBg: "bg-rose-100 text-rose-700 border-rose-200",
         watermark: "text-rose-500/10",
+        titleHover: "group-hover:text-rose-600",
         icon: "image"
       },
       {
-        bg: "bg-gradient-to-br from-[#0e2433] to-[#0a1926]",
-        border: "border-cyan-500/30 hover:border-cyan-400/60",
-        iconBg: "bg-cyan-500 shadow-cyan-500/30",
-        badgeBg: "bg-cyan-950/80 text-cyan-300 border-cyan-500/30",
+        bg: "bg-gradient-to-br from-cyan-50 via-white to-sky-50/70",
+        border: "border-cyan-200/80 hover:border-cyan-400",
+        iconBg: "bg-cyan-500 shadow-cyan-500/25",
+        badgeBg: "bg-cyan-100 text-cyan-800 border-cyan-200",
         watermark: "text-cyan-500/10",
+        titleHover: "group-hover:text-cyan-600",
         icon: "film"
       },
       {
-        bg: "bg-gradient-to-br from-[#19193b] to-[#101129]",
-        border: "border-indigo-500/30 hover:border-indigo-400/60",
-        iconBg: "bg-indigo-500 shadow-indigo-500/30",
-        badgeBg: "bg-indigo-950/80 text-indigo-300 border-indigo-500/30",
+        bg: "bg-gradient-to-br from-indigo-50 via-white to-blue-50/70",
+        border: "border-indigo-200/80 hover:border-indigo-400",
+        iconBg: "bg-indigo-500 shadow-indigo-500/25",
+        badgeBg: "bg-indigo-100 text-indigo-700 border-indigo-200",
         watermark: "text-indigo-500/10",
+        titleHover: "group-hover:text-indigo-600",
         icon: "aperture"
       }
     ];
@@ -290,9 +317,9 @@
         renderCards(galleryData);
       } catch (err) {
         document.getElementById('loading').innerHTML = `
-          <div class="bg-red-950/50 border border-red-500/40 text-red-200 px-6 py-4 rounded-2xl max-w-md text-center">
+          <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl max-w-md text-center shadow-sm">
             <p class="font-bold text-sm mb-1">ไม่สามารถดึงข้อมูลจาก Google Drive ได้</p>
-            <p class="text-xs text-red-300/80">${err.message}</p>
+            <p class="text-xs text-red-600/80">${err.message}</p>
           </div>
         `;
       }
@@ -337,9 +364,9 @@
 
     function getPillClass(isActive) {
       if (isActive) {
-        return "px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 flex items-center gap-1.5 whitespace-nowrap transition-all";
+        return "px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-white shadow-md shadow-sky-500/20 flex items-center gap-1.5 whitespace-nowrap transition-all";
       }
-      return "px-4 py-2 rounded-xl text-xs font-medium bg-slate-800/70 hover:bg-slate-800 text-slate-300 border border-slate-700/70 flex items-center gap-1.5 whitespace-nowrap transition-all";
+      return "px-4 py-2 rounded-xl text-xs font-medium bg-white hover:bg-sky-50 text-slate-600 border border-slate-200/90 shadow-sm flex items-center gap-1.5 whitespace-nowrap transition-all";
     }
 
     function selectMonthPill(month) {
@@ -387,9 +414,9 @@
 
       if (!dataset || dataset.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800">
-            <i data-lucide="folder-x" class="w-10 h-10 text-slate-500 mx-auto mb-3"></i>
-            <p class="text-slate-300 font-semibold text-sm">ไม่พบอัลบั้มกิจกรรมที่ค้นหา</p>
+          <div class="text-center py-20 bg-white/80 rounded-3xl border border-slate-200/80 shadow-sm">
+            <i data-lucide="folder-x" class="w-10 h-10 text-slate-400 mx-auto mb-3"></i>
+            <p class="text-slate-600 font-semibold text-sm">ไม่พบอัลบั้มกิจกรรมที่ค้นหา</p>
           </div>
         `;
         lucide.createIcons();
@@ -405,9 +432,9 @@
         const header = document.createElement('div');
         header.className = 'flex items-center gap-2.5';
         header.innerHTML = `
-          <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-          <h3 class="text-sm font-bold text-slate-300 tracking-wide">${group.month}</h3>
-          <div class="flex-1 h-px bg-slate-800/80 ml-2"></div>
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+          <h3 class="text-sm font-bold text-slate-700 tracking-wide">${group.month}</h3>
+          <div class="flex-1 h-px bg-slate-200 ml-2"></div>
         `;
         section.appendChild(header);
 
@@ -423,22 +450,22 @@
           card.onclick = () => openAlbumModal(group.month, event);
 
           if (!showPhotoCoverMode) {
-            card.className = `relative overflow-hidden rounded-2xl p-5 border ${theme.bg} ${theme.border} cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group min-h-[138px] flex flex-col justify-between`;
+            card.className = `relative overflow-hidden rounded-2xl p-5 border ${theme.bg} ${theme.border} shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group min-h-[138px] flex flex-col justify-between`;
             card.innerHTML = `
-              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold border ${theme.badgeBg} z-10">
+              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${theme.badgeBg} z-10">
                 ${event.photos.length} ภาพ
               </span>
 
               <div class="flex items-start gap-4 relative z-10 pr-14">
-                <div class="w-11 h-11 rounded-xl ${theme.iconBg} flex items-center justify-center text-white shadow-lg flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                <div class="w-11 h-11 rounded-xl ${theme.iconBg} flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                   <i data-lucide="${theme.icon}" class="w-5 h-5"></i>
                 </div>
 
                 <div class="space-y-1.5">
-                  <h4 class="text-base font-bold text-white group-hover:text-sky-200 transition-colors line-clamp-2 leading-snug">
+                  <h4 class="text-base font-bold text-slate-800 ${theme.titleHover} transition-colors line-clamp-2 leading-snug">
                     ${event.name}
                   </h4>
-                  <p class="text-xs text-slate-300/80 line-clamp-2 leading-relaxed">
+                  <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                     คลังภาพกิจกรรมประจำ${group.month} คลิกเพื่อเปิดดูรูปภาพและดาวน์โหลดไฟล์ความละเอียดสูง
                   </p>
                 </div>
@@ -449,20 +476,20 @@
               </div>
             `;
           } else {
-            card.className = `relative overflow-hidden rounded-2xl border ${theme.border} bg-slate-900 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group h-48`;
+            card.className = `relative overflow-hidden rounded-2xl border ${theme.border} bg-white shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group h-48`;
             card.innerHTML = `
-              <img src="${coverUrl}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75 group-hover:opacity-90" />
-              <div class="absolute inset-0 bg-gradient-to-t from-[#0b101e] via-[#0b101e]/40 to-transparent"></div>
-              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold border ${theme.badgeBg}">
+              <img src="${coverUrl}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-900/25 to-transparent"></div>
+              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${theme.badgeBg} shadow-sm">
                 ${event.photos.length} ภาพ
               </span>
               <div class="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg ${theme.iconBg} flex items-center justify-center text-white flex-shrink-0">
+                <div class="w-9 h-9 rounded-lg ${theme.iconBg} flex items-center justify-center text-white flex-shrink-0 shadow">
                   <i data-lucide="${theme.icon}" class="w-4 h-4"></i>
                 </div>
                 <div>
                   <h4 class="text-sm font-bold text-white line-clamp-1">${event.name}</h4>
-                  <p class="text-[11px] text-slate-300">${group.month}</p>
+                  <p class="text-[11px] text-slate-200">${group.month}</p>
                 </div>
               </div>
             `;
@@ -486,7 +513,7 @@
 
       const grid = document.getElementById('albumModalGrid');
       grid.innerHTML = eventObj.photos.map(photo => `
-        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-800 border border-slate-700/70 flex flex-col">
+        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm flex flex-col">
           <img 
             src="${photo.thumbnailUrl}" 
             alt="${photo.name}" 
@@ -495,10 +522,10 @@
             onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
           />
-          <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-center justify-between gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
               onclick="openLightbox('${photo.thumbnailUrl.replace('w800', 'w1600')}', '${photo.name}', '${photo.downloadUrl}')"
-              class="px-2.5 py-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-lg text-[11px] font-medium flex items-center gap-1"
+              class="px-2.5 py-1 bg-white/25 hover:bg-white/40 backdrop-blur-md text-white rounded-lg text-[11px] font-medium flex items-center gap-1"
             >
               <i data-lucide="zoom-in" class="w-3 h-3"></i> ขยาย
             </button>
@@ -506,7 +533,7 @@
               href="${photo.downloadUrl}" 
               download="${photo.name}" 
               target="_blank"
-              class="p-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg transition-colors"
+              class="p-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-lg transition-colors"
               title="ดาวน์โหลด"
             >
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
