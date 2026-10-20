@@ -32,19 +32,6 @@
   <!-- พื้นหลัง Glow ด้านบน -->
   <div class="fixed inset-0 pointer-events-none top-radial-glow -z-10"></div>
   <div class="fixed -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-
-  <!-- ฟิลเตอร์ SVG สำหรับตัดพื้นหลังสีดำของโลโก้ออก 100% -->
-  <svg width="0" height="0" class="fixed pointer-events-none">
-    <filter id="remove-black-bg" color-interpolation-filters="sRGB">
-      <feColorMatrix type="matrix" values="
-        1   0   0   0   0
-        0   1   0   0   0
-        0   0   1   0   0
-        3.5 3.5 3.5 0  -0.65
-      " />
-    </filter>
-  </svg>
-
   <!-- เนื้อหาหลัก -->
   <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-16">
 
