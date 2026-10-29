@@ -306,6 +306,34 @@
       }
     ];
 
+    // ฟังก์ชันดึงค่าวันที่จากชื่อโฟลเดอร์ (เช่น 29/10/2569 หรือ 29/10 2569) เพื่อเรียงใหม่สุดขึ้นบน
+    function extractDateScore(text, timestamp) {
+      if (timestamp) return timestamp;
+      if (!text) return 0;
+      const match = text.match(/(\d{1,2})\s*\/\s*(\d{1,2})(?:[\s\/]+(\d{2,4}))?/);
+      if (match) {
+        const day = parseInt(match[1], 10);
+        const month = parseInt(match[2], 10);
+        let year = match[3] ? parseInt(match[3], 10) : 2569;
+        if (year < 100) year += 2500;
+        return new Date(year - 543, month - 1, day).getTime();
+      }
+      return 0;
+    }
+
+    function sortGalleryNewestFirst(data) {
+      return data
+        .map((group, index) => ({
+          ...group,
+          _origIndex: index,
+          _score: extractDateScore(group.month, group.timestamp)
+        }))
+        .sort((a, b) => {
+          if (b._score !== a._score) return b._score - a._score; // วันที่ใหม่สุดขึ้นก่อน
+          return b._origIndex - a._origIndex; // หากไม่มีวันที่ ให้เอาโฟลเดอร์ที่เพิ่งเพิ่มล่าสุดขึ้นก่อน
+        });
+    }
+
     async function loadData() {
       try {
         lucide.createIcons();
@@ -313,7 +341,9 @@
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
-        galleryData = data;
+        // จัดเรียงอัลบั้มใหม่ล่าสุดขึ้นบนสุดทันที
+        galleryData = sortGalleryNewestFirst(data);
+
         document.getElementById('loading').classList.add('hidden');
         updateStats();
         buildMonthPills();
