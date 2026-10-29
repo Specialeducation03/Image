@@ -33,17 +33,15 @@
   <div class="fixed inset-0 pointer-events-none top-light-glow -z-10"></div>
   <div class="fixed -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[360px] bg-gradient-to-r from-sky-200/40 via-emerald-100/30 to-indigo-200/40 rounded-full blur-[100px] pointer-events-none -z-10"></div>
 
-  <!-- ฟิลเตอร์ SVG ตัดพื้นหลังสีดำพร้อมเก็บขอบละเอียดสำหรับวางบนพื้นหลังโทนสว่าง -->
+  <!-- ฟิลเตอร์ SVG ตัดพื้นหลังสีดำพร้อมเก็บขอบละเอียด -->
   <svg width="0" height="0" class="fixed pointer-events-none">
     <filter id="remove-black-bg" color-interpolation-filters="sRGB">
-      <!-- คำนวณความโปร่งใสจากความสว่างของเม็ดสี -->
       <feColorMatrix type="matrix" values="
         1   0   0   0   0
         0   1   0   0   0
         0   0   1   0   0
         4   4   4   0  -1.1
       " result="keyed" />
-      <!-- เก็บขอบดำขนาดเล็ก (Anti-alias fringe) ให้เนียนบนพื้นขาว -->
       <feMorphology operator="erode" radius="0.5" in="keyed" result="eroded" />
       <feComposite in="SourceGraphic" in2="eroded" operator="in" />
     </filter>
@@ -76,10 +74,9 @@
 
       <!-- แถบปุ่มสลับโหมด (ด้านหน้าสุด) และ ป้ายสถานะ -->
       <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-        <!-- ปุ่มสลับโหมดด้านหน้าสุด -->
         <button onclick="toggleCoverMode()" id="modeToggleBtn" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-300 bg-white hover:bg-sky-50 text-xs font-semibold text-sky-700 shadow-sm hover:shadow transition-all cursor-pointer active:scale-95">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-          <span id="modeToggleText">โหมดการ์ดสี</span>
+          <span id="modeToggleText">โหมดโชว์รูปปก</span>
         </button>
 
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-200/90 shadow-sm text-xs text-slate-600">
@@ -121,8 +118,8 @@
       <p class="text-sm font-medium text-slate-500">กำลังซิงค์ข้อมูลอัลบั้มภาพจาก Google Drive...</p>
     </div>
 
-    <!-- ปรับเป็น Grid แนวนอน 3 คอลัมน์ -->
-<div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- ตารางการ์ดกิจกรรม เรียงแนวนอน 3 คอลัมน์ -->
+    <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
   </main>
 
@@ -163,9 +160,8 @@
           </button>
         </div>
       </div>
-      <!-- แยกตัว Scroll ออกมาจาก Grid เพื่อไม่ให้แถวรูปภาพบีบอัดซ้อนกัน -->
       <div class="flex-1 overflow-y-auto scrollbar-custom p-5 sm:p-6 bg-slate-50/50">
-        <div id="albumModalGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-max"></div>
+        <div id="albumModalGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 auto-rows-max"></div>
       </div>
     </div>
   </div>
@@ -191,7 +187,7 @@
 
   <script>
     // ====================================================================
-    // 1. ตั้งค่ารูปโลโก้ (วางไฟล์รูปในโฟลเดอร์เดียวกัน หรือใส่ลิงก์รูปในเครื่องหมายคำพูด)
+    // 1. ตั้งค่ารูปโลโก้
     // ====================================================================
     const CUSTOM_LOGO_URL = "https://s.rsec3sk.workers.dev/logo.png"; 
 
@@ -228,9 +224,8 @@
 
     let galleryData = [];
     let currentMonthFilter = 'all';
-    let showPhotoCoverMode = false;
+    let showPhotoCoverMode = true; // ตั้งค่าเริ่มต้นให้โชว์รูปปกแนวนอนทันที
 
-    // ชุดสีการ์ดโทนสว่างพาสเทล (Light Pastel Bento Themes)
     const cardThemes = [
       {
         bg: "bg-gradient-to-br from-pink-50 via-white to-rose-50/70",
@@ -306,7 +301,6 @@
       }
     ];
 
-    // ฟังก์ชันดึงค่าวันที่จากชื่อโฟลเดอร์ (เช่น 29/10/2569 หรือ 29/10 2569) เพื่อเรียงใหม่สุดขึ้นบน
     function extractDateScore(text, timestamp) {
       if (timestamp) return timestamp;
       if (!text) return 0;
@@ -329,8 +323,8 @@
           _score: extractDateScore(group.month, group.timestamp)
         }))
         .sort((a, b) => {
-          if (b._score !== a._score) return b._score - a._score; // วันที่ใหม่สุดขึ้นก่อน
-          return b._origIndex - a._origIndex; // หากไม่มีวันที่ ให้เอาโฟลเดอร์ที่เพิ่งเพิ่มล่าสุดขึ้นก่อน
+          if (b._score !== a._score) return b._score - a._score;
+          return b._origIndex - a._origIndex;
         });
     }
 
@@ -341,7 +335,6 @@
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
-        // จัดเรียงอัลบั้มใหม่ล่าสุดขึ้นบนสุดทันที
         galleryData = sortGalleryNewestFirst(data);
 
         document.getElementById('loading').classList.add('hidden');
@@ -441,6 +434,7 @@
       renderCards(filtered);
     }
 
+    // แสดงผลการ์ดเรียงต่อกันในแนวนอน (3 คอลัมน์)
     function renderCards(dataset) {
       const container = document.getElementById('cards-container');
       container.innerHTML = '';
@@ -457,7 +451,6 @@
         return;
       }
 
-      // กำหนดให้เรียงเป็นแนวนอน 3 คอลัมน์
       container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
 
       let colorIndex = 0;
@@ -467,15 +460,13 @@
           const theme = cardThemes[colorIndex % cardThemes.length];
           colorIndex++;
 
-          // หากชื่อย่อยเป็น "รูปภาพกิจกรรม" ให้ใช้ชื่อโฟลเดอร์หลักแสดงเป็นชื่ออัลบั้มแทน
           const displayTitle = event.name === 'รูปภาพกิจกรรม' ? group.month : event.name;
-          const displaySub = event.name === 'รูปภาพกิจกรรม' ? 'คลังภาพกิจกรรมงานโสตทัศนูปกรณ์' : group.month;
+          const displaySub = event.name === 'รูปภาพกิจกรรม' ? 'คลังภาพงานโสตทัศนูปกรณ์' : group.month;
 
           const coverUrl = event.photos[0] ? event.photos[0].thumbnailUrl : '';
           const itemWrapper = document.createElement('div');
           itemWrapper.className = 'flex flex-col space-y-2.5';
 
-          // หัวข้อชื่อกิจกรรมเหนือการ์ด
           const header = document.createElement('div');
           header.className = 'flex items-center gap-2 px-1';
           header.innerHTML = `
@@ -484,7 +475,6 @@
           `;
           itemWrapper.appendChild(header);
 
-          // ตัวการ์ดอัลบั้ม
           const card = document.createElement('div');
           card.onclick = () => openAlbumModal(group.month, event);
 
@@ -542,97 +532,16 @@
       lucide.createIcons();
     }
 
-      let colorIndex = 0;
-
-      dataset.forEach((group) => {
-        const section = document.createElement('section');
-        section.className = 'space-y-4';
-
-        const header = document.createElement('div');
-        header.className = 'flex items-center gap-2.5';
-        header.innerHTML = `
-          <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
-          <h3 class="text-sm font-bold text-slate-700 tracking-wide">${group.month}</h3>
-          <div class="flex-1 h-px bg-slate-200 ml-2"></div>
-        `;
-        section.appendChild(header);
-
-        const grid = document.createElement('div');
-        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
-
-        group.events.forEach((event) => {
-          const theme = cardThemes[colorIndex % cardThemes.length];
-          colorIndex++;
-
-          const coverUrl = event.photos[0] ? event.photos[0].thumbnailUrl : '';
-          const card = document.createElement('div');
-          card.onclick = () => openAlbumModal(group.month, event);
-
-          if (!showPhotoCoverMode) {
-            card.className = `relative overflow-hidden rounded-2xl p-5 border ${theme.bg} ${theme.border} shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group min-h-[138px] flex flex-col justify-between`;
-            card.innerHTML = `
-              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${theme.badgeBg} z-10">
-                ${event.photos.length} ภาพ
-              </span>
-
-              <div class="flex items-start gap-4 relative z-10 pr-14">
-                <div class="w-11 h-11 rounded-xl ${theme.iconBg} flex items-center justify-center text-white shadow-md flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                  <i data-lucide="${theme.icon}" class="w-5 h-5"></i>
-                </div>
-
-                <div class="space-y-1.5">
-                  <h4 class="text-base font-bold text-slate-800 ${theme.titleHover} transition-colors line-clamp-2 leading-snug">
-                    ${event.name}
-                  </h4>
-                  <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                    คลังภาพกิจกรรมประจำ${group.month} คลิกเพื่อเปิดดูรูปภาพและดาวน์โหลดไฟล์ความละเอียดสูง
-                  </p>
-                </div>
-              </div>
-
-              <div class="absolute -bottom-3 -right-2 ${theme.watermark} pointer-events-none transform -rotate-12 group-hover:scale-110 transition-transform duration-500">
-                <i data-lucide="${theme.icon}" class="w-24 h-24 stroke-[1.5]"></i>
-              </div>
-            `;
-          } else {
-            card.className = `relative overflow-hidden rounded-2xl border ${theme.border} bg-white shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group h-48`;
-            card.innerHTML = `
-              <img src="${coverUrl}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-900/25 to-transparent"></div>
-              <span class="absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${theme.badgeBg} shadow-sm">
-                ${event.photos.length} ภาพ
-              </span>
-              <div class="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg ${theme.iconBg} flex items-center justify-center text-white flex-shrink-0 shadow">
-                  <i data-lucide="${theme.icon}" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <h4 class="text-sm font-bold text-white line-clamp-1">${event.name}</h4>
-                  <p class="text-[11px] text-slate-200">${group.month}</p>
-                </div>
-              </div>
-            `;
-          }
-
-          grid.appendChild(card);
-        });
-
-        section.appendChild(grid);
-        container.appendChild(section);
-      });
-
-      lucide.createIcons();
-    }
-
     function openAlbumModal(monthName, eventObj) {
       const modal = document.getElementById('albumModal');
-      document.getElementById('albumModalMonth').textContent = monthName;
-      document.getElementById('albumModalTitle').textContent = eventObj.name;
+      const displayTitle = eventObj.name === 'รูปภาพกิจกรรม' ? monthName : eventObj.name;
+      document.getElementById('albumModalMonth').textContent = 'คลังภาพงานโสตทัศนูปกรณ์';
+      document.getElementById('albumModalTitle').textContent = displayTitle;
       document.getElementById('albumModalCount').textContent = `${eventObj.photos.length} รูปภาพ`;
 
       const grid = document.getElementById('albumModalGrid');
       grid.innerHTML = eventObj.photos.map(photo => `
-        <div class="group relative w-full h-40 sm:h-44 rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-sm">
+        <div class="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-sm">
           <img 
             src="${photo.thumbnailUrl}" 
             alt="${photo.name}" 
